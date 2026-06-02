@@ -1,0 +1,60 @@
+.song-usage-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Dot indicator */
+.song-usage-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  background: currentColor;
+  opacity: 0.85;
+}
+
+/* Day suffix — slightly muted so the label stays primary */
+.song-usage-badge__days {
+  opacity: 0.75;
+  font-weight: 500;
+}
+
+/* Compact variant: remove padding tweak so it sits inline */
+.song-usage-badge--compact {
+  padding: 2px 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Color variants — override .badge base colors per freshness level    */
+/* ------------------------------------------------------------------ */
+
+/* hot → danger (#FF453A) */
+.song-usage-badge--hot {
+  background: var(--danger-dim);
+  color: var(--danger);
+}
+
+/* active → success (#32D74B) */
+.song-usage-badge--active {
+  background: var(--success-dim);
+  color: var(--success);
+}
+
+/* warm → warning (#FFD60A) */
+.song-usage-badge--warm {
+  background: var(--warning-dim);
+  color: var(--warning);
+}
+
+/* cold → info blue (#0A84FF) */
+.song-usage-badge--cold {
+  background: var(--info-dim);
+  color: var(--info);
+}
+
+/* forgotten → tertiary text, subtle bg */
+.song-usage-badge--forgotten {
+  background: rgba(142, 142, 147, 0.12);
+  color: var(--text-tertiary);
+}

@@ -1,0 +1,41 @@
+.main-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-layout__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.main-layout__content {
+  flex: 1;
+  overflow-y: auto;
+  animation: fadeInUp 0.28s ease both;
+}
+
+.main-layout__inner {
+  padding: var(--content-padding);
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+
+/* Mobile: leave room for bottom nav */
+@media (max-width: 767px) {
+  .main-layout__inner {
+    padding: var(--content-padding-mobile);
+    padding-bottom: calc(var(--bottom-nav-height) + var(--content-padding-mobile));
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main-layout__inner {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,121 @@
+.catalog-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.catalog-stats__grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.catalog-stats__grid--main {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.catalog-stats__grid--sync {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.catalog-stats__divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 2px 0;
+}
+
+.catalog-stats__divider::before,
+.catalog-stats__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color, #3A3A3C);
+}
+
+.catalog-stats__divider-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.stat-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color, #3A3A3C);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: background 0.15s;
+}
+
+.stat-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.stat-card__value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stat-card__label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+.stat-card--loading {
+  pointer-events: none;
+}
+
+.stat-card__icon-skeleton,
+.stat-card__value-skeleton,
+.stat-card__label-skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--bg-tertiary, #3A3A3C) 25%, rgba(255,255,255,0.05) 50%, var(--bg-tertiary, #3A3A3C) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.stat-card__icon-skeleton {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.stat-card__value-skeleton {
+  width: 48px;
+  height: 26px;
+}
+
+.stat-card__label-skeleton {
+  width: 80%;
+  height: 14px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (min-width: 640px) {
+  .catalog-stats__grid--main {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .catalog-stats__grid--sync {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

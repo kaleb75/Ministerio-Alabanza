@@ -1,0 +1,214 @@
+.approval-panel {
+  background: var(--bg-secondary);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: sheet-up 0.25s ease;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.approval-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border-color, #3A3A3C);
+  position: sticky;
+  top: 0;
+  background: var(--bg-secondary);
+  z-index: 1;
+}
+
+.approval-panel__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.approval-panel__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-tertiary, #3A3A3C);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.approval-panel__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.approval-panel__summary {
+  background: var(--bg-tertiary, #3A3A3C);
+  border-radius: var(--radius-lg, 16px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.approval-panel__summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.approval-panel__summary-label {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.approval-panel__summary-value {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+  text-align: right;
+}
+
+.approval-panel__summary-value--highlight {
+  color: var(--accent-orange);
+  font-weight: 700;
+}
+
+.approval-panel__requester {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.approval-panel__date {
+  color: var(--text-tertiary);
+  font-size: 12px;
+}
+
+.approval-panel__reason {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.approval-panel__reason-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+
+.approval-panel__reason-text {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--bg-tertiary, #3A3A3C);
+  border-radius: var(--radius-md);
+  font-style: italic;
+}
+
+.approval-panel__errors {
+  background: rgba(255, 69, 58, 0.1);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.approval-panel__error-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 13px;
+  color: #FF453A;
+}
+
+.approval-panel__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.approval-panel__approve-btn,
+.approval-panel__reject-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex: 1;
+  height: 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  min-width: 44px;
+}
+
+.approval-panel__approve-btn {
+  background: #30D158;
+  color: #fff;
+}
+
+.approval-panel__reject-btn {
+  background: rgba(255, 69, 58, 0.15);
+  color: #FF453A;
+  border: 1px solid rgba(255, 69, 58, 0.3);
+}
+
+.approval-panel__approve-btn:disabled,
+.approval-panel__reject-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.approval-panel__review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.approval-panel__review-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.approval-panel__review-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.approval-panel__review-actions .btn {
+  flex: 1;
+  height: 46px;
+}
+
+.approval-panel__review-actions .approval-panel__approve-btn,
+.approval-panel__review-actions .approval-panel__reject-btn {
+  flex: 2;
+}
+
+@media (min-width: 640px) {
+  .approval-panel {
+    border-radius: 20px;
+    max-height: 85vh;
+  }
+}

@@ -1,0 +1,256 @@
+/* ============================================================
+   SongHistoryTimeline — Apple dark-mode timeline layout
+   ============================================================ */
+
+.song-history-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* ---- Month group ---- */
+
+.sht-month-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sht-month-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  background: var(--bg-primary);
+  z-index: 1;
+  padding-top: 4px;
+}
+
+.sht-month-header__label {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.sht-month-header__count {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---- Timeline rows ---- */
+
+.sht-month-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: 8px;
+}
+
+.sht-timeline-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  padding: 8px 0;
+}
+
+/* vertical line + dot */
+
+.sht-timeline-line {
+  width: 24px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.sht-timeline-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: var(--border-subtle);
+}
+
+.sht-timeline-row:first-child .sht-timeline-line::before {
+  top: 14px; /* start below the dot on the first item */
+}
+
+.sht-timeline-row:last-child .sht-timeline-line::before {
+  bottom: calc(100% - 14px);
+  top: 0;
+}
+
+.sht-timeline-row:only-child .sht-timeline-line::before {
+  display: none;
+}
+
+.sht-timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--accent-orange);
+  border: 2px solid var(--bg-primary);
+  flex-shrink: 0;
+  margin-top: 12px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 0 2px var(--accent-orange-dim);
+}
+
+/* ---- Event card ---- */
+
+.sht-event-card {
+  flex: 1;
+  min-width: 0;
+  margin-left: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sht-event-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sht-event-card__date-col {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sht-event-card__date-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.sht-event-card__date {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: capitalize;
+  font-variant-numeric: tabular-nums;
+}
+
+.sht-event-card__type-badge {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--font-size-xs);
+}
+
+/* type-badge fallback variant */
+.badge-default {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.sht-event-card__title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.sht-event-card__director {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.sht-event-card__director-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ---- Song list ---- */
+
+.sht-song-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.sht-song-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sht-song-row__icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.sht-song-row__title {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Key badge ---- */
+
+.sht-key-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  background: var(--bg-tertiary);
+  color: var(--accent-orange);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+/* ---- Event notes ---- */
+
+.sht-event-card__notes {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  font-style: italic;
+  line-height: 1.5;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 480px) {
+  .sht-month-header__label {
+    font-size: var(--font-size-md);
+  }
+
+  .sht-event-card {
+    padding: 12px;
+  }
+
+  .sht-month-events {
+    padding-left: 4px;
+  }
+}

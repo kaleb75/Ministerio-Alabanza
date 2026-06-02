@@ -1,0 +1,94 @@
+.event-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.event-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.event-card__type-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.event-card__type {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.event-card__arrow {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.event-card:hover .event-card__arrow {
+  transform: translateX(3px);
+  color: var(--accent-orange);
+}
+
+.event-card__title {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.event-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.event-card__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.event-card__meta-item svg {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.event-card__days-label {
+  font-style: normal;
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+.event-card__notes {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  font-style: italic;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-subtle);
+  line-height: 1.5;
+}
+
+/* Compact variant */
+.event-card--compact {
+  padding: 12px;
+  gap: 6px;
+}
+
+.event-card--compact .event-card__title {
+  font-size: var(--font-size-base);
+}
+
+.event-card--compact .event-card__meta {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -1,0 +1,73 @@
+/* ============================================================
+   History page
+   ============================================================ */
+
+.history {
+  animation: fadeInUp 0.3s ease both;
+}
+
+/* ----------------------------------------------------------
+   Stats grid — 4 columns on wide, 2 on tablet, 1 on mobile
+   ---------------------------------------------------------- */
+
+.history-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4, 1rem);
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+@media (max-width: 1024px) {
+  .history-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .history-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------------------------
+   Timeline section
+   ---------------------------------------------------------- */
+
+.history-timeline-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 1rem);
+}
+
+.history-section-title {
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: 600;
+  color: var(--color-text-primary, #111827);
+  margin: 0;
+}
+
+.history-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color, #3A3A3C);
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.history-tab {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+  min-height: 44px;
+}
+
+.history-tab--active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-orange);
+  font-weight: 600;
+}

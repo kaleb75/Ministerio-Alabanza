@@ -1,0 +1,194 @@
+.rec-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.rec-card:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: 2px;
+}
+
+/* ── Header ── */
+.rec-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Rank bubble */
+.rec-card__rank {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: -0.02em;
+  margin-top: 1px;
+}
+
+/* Top-3 ranks get slightly more visual weight */
+.rec-card:nth-child(1) .rec-card__rank,
+.rec-card:nth-child(2) .rec-card__rank,
+.rec-card:nth-child(3) .rec-card__rank {
+  background: var(--accent-orange);
+  color: #000;
+}
+
+.rec-card__title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.rec-card__title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-card__author {
+  margin-top: 2px;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rec-card__arrow {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.rec-card:hover .rec-card__arrow {
+  transform: translateX(3px);
+  color: var(--accent-orange);
+}
+
+/* ── Badges row ── */
+.rec-card__badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rec-card__key-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* ── Stats row ── */
+.rec-card__stats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rec-card__stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.rec-card__stat svg {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.rec-card__stat--recent {
+  color: var(--accent-orange);
+}
+
+.rec-card__stat--recent svg {
+  color: var(--accent-orange);
+}
+
+.rec-card__stat-divider {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--text-tertiary);
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+/* ── Score section ── */
+.rec-card__score-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rec-card__score-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rec-card__score-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rec-card__score-value {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+/* Progress track */
+.rec-card__progress-track {
+  width: 100%;
+  height: 5px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+/* Gradient fill: orange (high score) → yellow-warm (lower score) */
+.rec-card__progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    90deg,
+    var(--warning) 0%,
+    var(--accent-orange) 60%,
+    #FF6A00 100%
+  );
+  background-size: 200% 100%;
+  background-position: right center;
+  transition: width var(--transition-slow);
+}
+
+/* ── Reason text ── */
+.rec-card__reason {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-subtle);
+}

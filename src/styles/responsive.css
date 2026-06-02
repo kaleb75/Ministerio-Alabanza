@@ -1,0 +1,82 @@
+/*
+  Breakpoints (mobile-first):
+  xs:  0px   — base mobile
+  sm:  480px — large mobile
+  md:  768px — tablet
+  lg:  1024px — laptop
+  xl:  1280px — desktop
+  2xl: 1440px — large desktop
+*/
+
+/* --- Grid system --- */
+.grid {
+  display: grid;
+  gap: var(--content-padding);
+}
+
+.grid-1 { grid-template-columns: 1fr; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+.grid-auto-sm {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.grid-auto-md {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.grid-auto-lg {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* --- Flex utilities --- */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.gap-xs { gap: 4px; }
+.gap-sm { gap: 8px; }
+.gap-md { gap: 16px; }
+.gap-lg { gap: 24px; }
+.gap-xl { gap: 32px; }
+
+/* --- Spacing utilities --- */
+.p-sm { padding: 8px; }
+.p-md { padding: 16px; }
+.p-lg { padding: 24px; }
+.px-sm { padding-left: 8px; padding-right: 8px; }
+.px-md { padding-left: 16px; padding-right: 16px; }
+.py-sm { padding-top: 8px; padding-bottom: 8px; }
+.py-md { padding-top: 16px; padding-bottom: 16px; }
+
+/* --- Visibility --- */
+.hide-mobile { display: none; }
+.show-mobile { display: flex; }
+
+/* sm: ≥480px */
+@media (min-width: 480px) {
+  .grid-sm-2 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* md: ≥768px (tablet+) */
+@media (min-width: 768px) {
+  .hide-mobile { display: flex; }
+  .show-mobile { display: none; }
+
+  .grid-md-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-md-3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* lg: ≥1024px (desktop+) */
+@media (min-width: 1024px) {
+  .grid-lg-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-lg-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-lg-4 { grid-template-columns: repeat(4, 1fr); }
+}

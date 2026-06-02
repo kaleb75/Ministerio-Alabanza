@@ -1,0 +1,73 @@
+/* ============================================================
+   RepetitionWarning
+   ============================================================ */
+
+/* ---- Banner (default, block-level) ---- */
+
+.rw-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.rw-banner__icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.rw-banner__message {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* warn variant */
+.rw-banner.rw--warn {
+  background: var(--warning-dim);
+  border-color: rgba(255, 214, 10, 0.3);
+  color: var(--warning);
+}
+
+/* block variant */
+.rw-banner.rw--block {
+  background: var(--danger-dim);
+  border-color: rgba(255, 69, 58, 0.3);
+  color: var(--danger);
+}
+
+/* ---- Inline chip ---- */
+
+.rw-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  max-width: 280px;
+}
+
+.rw-inline__message {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* warn variant */
+.rw-inline.rw--warn {
+  background: var(--warning-dim);
+  color: var(--warning);
+}
+
+/* block variant */
+.rw-inline.rw--block {
+  background: var(--danger-dim);
+  color: var(--danger);
+}

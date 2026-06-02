@@ -1,0 +1,241 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--topbar-height);
+  padding: 0 var(--content-padding);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-topbar);
+  flex-shrink: 0;
+}
+
+/* --- Left --- */
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.topbar__menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.topbar__menu-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.topbar__title-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar__title {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__date {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* --- Right --- */
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.topbar__icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.topbar__icon-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.topbar__badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  background: var(--danger);
+  color: #fff;
+  border-radius: var(--radius-full);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-secondary);
+}
+
+.topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.topbar__user:hover {
+  background: var(--bg-tertiary);
+}
+
+.topbar__avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--accent-orange);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.topbar__user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.topbar__user-name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.topbar__user-role {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* ── Storage chip ──────────────────────────────────────────────────── */
+.topbar__storage {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  max-width: 160px;
+  overflow: hidden;
+}
+
+.topbar__storage--ok {
+  background: var(--success-dim);
+  color: var(--success);
+}
+
+.topbar__storage--ok:hover {
+  background: rgba(50,215,75,.25);
+}
+
+.topbar__storage--warn {
+  background: var(--warning-dim);
+  color: var(--warning);
+  animation: storageWarnPulse 2.5s ease-in-out infinite;
+}
+
+.topbar__storage--warn:hover {
+  background: rgba(255,214,10,.3);
+  animation: none;
+}
+
+.topbar__storage--loading {
+  background: var(--bg-tertiary);
+  color: var(--text-tertiary);
+  cursor: default;
+}
+
+.topbar__storage-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__storage-spin {
+  animation: storageSpin .9s linear infinite;
+}
+
+@keyframes storageSpin { to { transform: rotate(360deg); } }
+
+@keyframes storageWarnPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .65; }
+}
+
+/* Hide label on small screens, keep icon */
+@media (max-width: 600px) {
+  .topbar__storage span { display: none; }
+  .topbar__storage { padding: 4px 6px; max-width: none; }
+}
+
+/* ─────────────────────────────────────────────────────────────────── */
+
+.topbar__notif-wrap {
+  position: relative;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .topbar {
+    padding: 0 var(--content-padding-mobile);
+  }
+
+  .topbar__menu-btn {
+    display: flex;
+  }
+
+  .topbar__user-info {
+    display: none;
+  }
+
+  .topbar__date {
+    display: none;
+  }
+}

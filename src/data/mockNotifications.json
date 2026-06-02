@@ -1,0 +1,86 @@
+[
+  {
+    "id": "notif-001",
+    "type": "request_submitted",
+    "title": "Nueva solicitud de cambio",
+    "body": "María González solicitó cambio de fecha para Culto Dominical del 8 de junio",
+    "relatedId": "req-008",
+    "recipientRoles": ["admin", "lider_directores"],
+    "isRead": false,
+    "createdAt": "2026-06-01T08:00:00Z"
+  },
+  {
+    "id": "notif-002",
+    "type": "request_submitted",
+    "title": "Nueva solicitud de reasignación",
+    "body": "María González solicitó reasignación para Conferencia de Verano del 12 de julio",
+    "relatedId": "req-002",
+    "recipientRoles": ["admin", "lider_directores"],
+    "isRead": false,
+    "createdAt": "2026-05-30T14:30:00Z"
+  },
+  {
+    "id": "notif-003",
+    "type": "request_submitted",
+    "title": "Nueva solicitud de cambio",
+    "body": "Charlie Rodríguez solicitó cambio de fecha para Servicio de Miércoles del 17 de junio",
+    "relatedId": "req-001",
+    "recipientRoles": ["admin", "lider_directores"],
+    "isRead": false,
+    "createdAt": "2026-05-29T09:15:00Z"
+  },
+  {
+    "id": "notif-004",
+    "type": "request_rejected",
+    "title": "Solicitud rechazada",
+    "body": "Tu solicitud de cambio para el Culto Dominical del 25 de mayo fue rechazada",
+    "relatedId": "req-004",
+    "recipientRoles": ["lider_directores"],
+    "recipientUserId": 3,
+    "isRead": true,
+    "createdAt": "2026-05-19T09:00:00Z"
+  },
+  {
+    "id": "notif-005",
+    "type": "request_approved",
+    "title": "Solicitud aprobada",
+    "body": "Tu solicitud de cambio para el Culto Dominical del 22 de febrero fue aprobada",
+    "relatedId": "req-003",
+    "recipientRoles": ["director"],
+    "recipientUserId": 2,
+    "isRead": true,
+    "createdAt": "2026-02-16T10:20:00Z"
+  },
+  {
+    "id": "notif-006",
+    "type": "schedule_updated",
+    "title": "Calendario actualizado",
+    "body": "El Culto Dominical del 22 de febrero fue reprogramado para el 1 de marzo",
+    "relatedId": "16",
+    "recipientRoles": ["admin", "lider_directores", "director", "musico"],
+    "isRead": true,
+    "createdAt": "2026-02-16T10:21:00Z"
+  },
+  {
+    "id": "notif-007",
+    "type": "request_approved",
+    "title": "Solicitud aprobada",
+    "body": "La Conferencia de Avivamiento del 5 de octubre fue aprobada para reprogramación",
+    "relatedId": "req-006",
+    "recipientRoles": ["lider_directores"],
+    "recipientUserId": 3,
+    "isRead": true,
+    "createdAt": "2025-09-29T11:15:00Z"
+  },
+  {
+    "id": "notif-008",
+    "type": "request_rejected",
+    "title": "Solicitud rechazada",
+    "body": "Tu solicitud de reasignación para el Culto Dominical del 13 de julio fue rechazada",
+    "relatedId": "req-007",
+    "recipientRoles": ["director"],
+    "recipientUserId": 2,
+    "isRead": true,
+    "createdAt": "2025-07-06T08:30:00Z"
+  }
+]

@@ -1,0 +1,278 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Profile ──────────────────────────────────────────────── */
+.settings__profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  flex-wrap: wrap;
+}
+
+.settings__avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.settings__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings__name  { font-size: var(--font-size-lg); font-weight: 600; }
+.settings__email { font-size: var(--font-size-sm); color: var(--text-tertiary); }
+.settings__logout { flex-shrink: 0; }
+
+@media (max-width: 480px) {
+  .settings__profile { flex-direction: column; align-items: flex-start; }
+  .settings__logout  { width: 100%; justify-content: center; }
+}
+
+/* ── Section card ──────────────────────────────────────────── */
+.settings__section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+.settings__musical-ai {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.settings__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.settings__section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.settings__sync-time {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.settings__desc {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.settings__desc code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--font-size-xs);
+  background: var(--bg-tertiary);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--accent-orange);
+}
+
+/* ── Alerts ───────────────────────────────────────────────── */
+.settings__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.settings__alert--warning { background: var(--warning-dim); color: var(--warning); }
+.settings__alert--danger  { background: var(--danger-dim);  color: var(--danger);  }
+
+/* ── File System connected state ───────────────────────────── */
+.settings__fs-connected {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings__fs-folder {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--success-dim);
+  border: 1px solid rgba(50,215,75,.2);
+  border-radius: var(--radius-md);
+}
+
+.settings__fs-folder-name {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--success);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.settings__fs-folder-files {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.settings__fs-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.settings__connect-btn {
+  width: fit-content;
+}
+
+.settings__sync-msg {
+  font-size: var(--font-size-sm);
+  color: var(--success);
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+/* ── How it works note ────────────────────────────────────── */
+.settings__fs-note {
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.settings__fs-note strong {
+  display: block;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.settings__fs-note ol {
+  list-style: decimal;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings__fs-note code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--font-size-xs);
+  background: var(--bg-active);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--accent-orange);
+}
+
+/* ── Spinner ──────────────────────────────────────────────── */
+.settings__spinner {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: settingsSpin .7s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes settingsSpin { to { transform: rotate(360deg); } }
+
+/* ── Musical AI sliders ───────────────────────────────────── */
+.settings__reset-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.settings__reset-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.settings__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.settings__row-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  flex: 1;
+  min-width: 0;
+}
+
+.settings__options { display: flex; gap: 6px; flex-shrink: 0; }
+
+.settings__option-btn {
+  padding: 5px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.settings__option-btn:hover { color: var(--text-primary); }
+
+.settings__option-btn--active {
+  background: var(--accent-orange-dim);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .settings__row { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── Reset confirm ────────────────────────────────────────── */
+.settings__confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}

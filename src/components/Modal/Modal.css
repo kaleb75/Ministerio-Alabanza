@@ -1,0 +1,348 @@
+/* ═══════════════════════════════════════════════════════
+   MODAL — rendered via createPortal into document.body
+   ═══════════════════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  /*
+   * z-index must beat the topbar (sticky, z-index:200) which lives inside
+   * a container with overflow:hidden — that creates an isolated stacking
+   * context that can paint on top of portal children at z-index:9000.
+   * Using 99999 guarantees we are always the topmost layer.
+   */
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;   /* mobile: sheet slides up from bottom */
+  animation: fadeIn 0.18s ease;
+}
+
+/* ── Desktop: start below the topbar, never centered ── */
+@media (min-width: 640px) {
+  .modal-overlay {
+    flex-direction: row;
+    /*
+     * flex-start + padding-top = modal always anchored below topbar.
+     * Do NOT use align-items:center — centering is unpredictable when
+     * the modal is taller than (viewport - topbar).
+     */
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 72px;   /* topbar is 64px; 8px breathing room */
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+/* ── Modal panel ── */
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  width: 100%;
+
+  /* Mobile: bottom sheet */
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  max-height: 88dvh;
+
+  /* Flex column: header is always visible, body scrolls */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  animation: slideUpModal 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (min-width: 640px) {
+  .modal {
+    border-radius: var(--radius-lg);
+    /* Height = viewport  − top-padding (72px) − bottom-padding (20px) */
+    max-height: calc(100dvh - 92px);
+    animation: scaleInModal 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .modal--sm { max-width: 400px; }
+  .modal--md { max-width: 560px; }
+  .modal--lg { max-width: 780px; }
+}
+
+/* ── Header — always visible, never scrolls away ── */
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);      /* solid bg — no bleed-through */
+  flex-shrink: 0;                        /* never shrink */
+  /* Stays on top of body content if any stacking weirdness */
+  position: relative;
+  z-index: 2;
+}
+
+.modal__title {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.modal__close {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.modal__close:hover {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+/* ── Body — scrollable, strictly below header ── */
+.modal__body {
+  flex: 1;
+  min-height: 0;          /* CRITICAL: lets flex child shrink + scroll in all browsers */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 20px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─────────────────────────────────────────────────
+   FORM STYLES  (shared by all form modals)
+   ───────────────────────────────────────────────── */
+
+.form-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.form-grid--2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 480px) {
+  .form-grid--2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field--full {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
+.form-label--required::after {
+  content: ' *';
+  color: var(--danger);
+}
+
+.form-label__note {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font-size: var(--font-size-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 3px var(--accent-orange-dim);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.form-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E8E93' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.form-error {
+  font-size: var(--font-size-xs);
+  color: var(--danger);
+}
+
+/* ── Form actions — sticky at bottom of scrollable body ── */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 24px;
+  /* Stick to bottom when form is long */
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-secondary);
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+}
+
+.form-actions .btn {
+  min-width: 110px;
+}
+
+/* ── Song selector ── */
+.song-selector {
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.song-selector__search {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-tertiary);
+}
+
+.song-selector__search-input {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  flex: 1;
+  outline: none;
+}
+
+.song-selector__search-input::placeholder { color: var(--text-tertiary); }
+
+.song-selector__list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.song-selector__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.song-selector__item:last-child { border-bottom: none; }
+.song-selector__item:hover { background: var(--bg-hover); }
+.song-selector__item--selected { background: var(--accent-orange-dim); }
+
+.song-selector__check {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.song-selector__item--selected .song-selector__check {
+  background: var(--accent-orange);
+  border-color: var(--accent-orange);
+}
+
+.song-selector__item-title {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-selector__item-key {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--accent-orange);
+  flex-shrink: 0;
+}
+
+.song-selector__selected-count {
+  padding: 6px 12px;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(100%); opacity: 0.8; }
+  to   { transform: translateY(0);    opacity: 1;   }
+}
+
+@keyframes scaleInModal {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}

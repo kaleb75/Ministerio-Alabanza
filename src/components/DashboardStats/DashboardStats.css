@@ -1,0 +1,93 @@
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.stat-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.stat-card__value {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.stat-card__label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stat-card__sublabel {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+/* Variants */
+.stat-card--orange .stat-card__icon {
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+}
+
+.stat-card--orange .stat-card__value {
+  color: var(--accent-orange);
+}
+
+.stat-card--success .stat-card__icon {
+  background: var(--success-dim);
+  color: var(--success);
+}
+
+.stat-card--success .stat-card__value {
+  color: var(--success);
+}
+
+.stat-card--warning .stat-card__icon {
+  background: var(--warning-dim);
+  color: var(--warning);
+}
+
+.stat-card--warning .stat-card__value {
+  color: var(--warning);
+}
+
+.stat-card--danger .stat-card__icon {
+  background: var(--danger-dim);
+  color: var(--danger);
+}
+
+.stat-card--danger .stat-card__value {
+  color: var(--danger);
+}
+
+.stat-card--info .stat-card__icon {
+  background: var(--info-dim);
+  color: var(--info);
+}
+
+.stat-card--info .stat-card__value {
+  color: var(--info);
+}
+
+.stat-card--default .stat-card__icon {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}

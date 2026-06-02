@@ -1,0 +1,331 @@
+/* ============================================================
+   SongInsights — Apple dark-mode card layout
+   ============================================================ */
+
+.song-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ---- Section block ---- */
+
+.si-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.si-block__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.si-block__icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.si-section-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  flex: 1;
+}
+
+/* ---- Variety score card ---- */
+
+.si-variety-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.si-variety-card__gauge {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+}
+
+.si-gauge-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.si-gauge-track {
+  stroke: var(--bg-tertiary);
+}
+
+.si-gauge-text {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  fill: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
+
+.si-variety-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.si-variety-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.si-variety-card__label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.si-variety-card__label--success { color: var(--success); }
+.si-variety-card__label--info    { color: var(--info); }
+.si-variety-card__label--warning { color: var(--warning); }
+.si-variety-card__label--danger  { color: var(--danger); }
+
+.si-variety-card__description {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+/* gauge fill colours per variant */
+.si-variety-card--success .si-gauge-fill { stroke: var(--success); }
+.si-variety-card--info    .si-gauge-fill { stroke: var(--info); }
+.si-variety-card--warning .si-gauge-fill { stroke: var(--warning); }
+.si-variety-card--danger  .si-gauge-fill { stroke: var(--danger); }
+
+/* ---- Forgotten songs list ---- */
+
+.si-forgotten-list {
+  overflow: hidden;
+}
+
+.si-forgotten-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+
+.si-forgotten-row:last-child {
+  border-bottom: none;
+}
+
+.si-forgotten-row:hover {
+  background: var(--bg-hover);
+}
+
+.si-forgotten-row__rank {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.si-forgotten-row__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.si-forgotten-row__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.si-forgotten-row__meta {
+  display: flex;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.si-forgotten-row__right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.si-forgotten-row__badge {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Key badge (shared) ---- */
+
+.si-key-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  background: var(--bg-tertiary);
+  color: var(--accent-orange);
+  letter-spacing: 0.02em;
+}
+
+/* ---- Recommendation highlight ---- */
+
+.si-recommendation {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  border-left: 3px solid var(--accent-orange);
+  position: relative;
+}
+
+.si-recommendation__icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--accent-orange-dim);
+  color: var(--accent-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.si-recommendation__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.si-recommendation__title {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.si-recommendation__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.si-recommendation__genre {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.si-recommendation__reason {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+.si-recommendation__arrow {
+  color: var(--accent-orange);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ---- Overused warning section ---- */
+
+.si-overused-wrap {
+  overflow: hidden;
+}
+
+.si-overused {
+  padding: 0;
+}
+
+.si-overused__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.si-overused__icon {
+  color: var(--danger);
+  flex-shrink: 0;
+}
+
+.si-overused__count {
+  margin-left: auto;
+}
+
+.si-overused__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.si-overused__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+
+.si-overused__item:last-child {
+  border-bottom: none;
+}
+
+.si-overused__item:hover {
+  background: var(--bg-hover);
+}
+
+.si-overused__music-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.si-overused__name {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.si-overused__days {
+  font-size: var(--font-size-xs);
+  color: var(--danger);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}

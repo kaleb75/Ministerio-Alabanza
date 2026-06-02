@@ -1,0 +1,230 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 900;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  animation: overlay-in 0.2s ease;
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.req-form {
+  background: var(--bg-secondary);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 560px;
+  max-height: 92vh;
+  overflow-y: auto;
+  animation: sheet-up 0.25s ease;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.req-form__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-secondary);
+  z-index: 1;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color, #3A3A3C);
+}
+
+.req-form__title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.req-form__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--bg-tertiary, #3A3A3C);
+  border: none;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.req-form__body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.req-form__errors {
+  background: rgba(255, 69, 58, 0.1);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.req-form__error-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 13px;
+  color: #FF453A;
+}
+
+.req-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.req-form__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.req-form__required {
+  color: #FF453A;
+}
+
+.req-form__select,
+.req-form__input {
+  height: 46px;
+  padding: 0 14px;
+  background: var(--bg-tertiary, #3A3A3C);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.req-form__select:focus,
+.req-form__input:focus {
+  border-color: var(--accent-orange);
+}
+
+.req-form__select option {
+  background: var(--bg-secondary);
+}
+
+.req-form__textarea {
+  padding: 12px 14px;
+  background: var(--bg-tertiary, #3A3A3C);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 15px;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.req-form__textarea:focus {
+  border-color: var(--accent-orange);
+}
+
+.req-form__textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.req-form__type-pills {
+  display: flex;
+  gap: 8px;
+}
+
+.req-form__type-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+  height: 40px;
+  padding: 0 14px;
+  background: var(--bg-tertiary, #3A3A3C);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.req-form__type-pill--active {
+  background: rgba(255, 149, 0, 0.15);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  font-weight: 600;
+}
+
+.req-form__info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  background: rgba(10, 132, 255, 0.1);
+  border: 1px solid rgba(10, 132, 255, 0.25);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: #0A84FF;
+  line-height: 1.5;
+}
+
+.req-form__actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.req-form__actions .btn {
+  flex: 1;
+  height: 48px;
+  font-size: 15px;
+}
+
+@media (min-width: 640px) {
+  .modal-overlay {
+    align-items: center;
+    padding: 20px;
+  }
+
+  .req-form {
+    border-radius: 20px;
+    max-height: 85vh;
+  }
+
+  @keyframes sheet-up {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+}

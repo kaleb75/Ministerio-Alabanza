@@ -1,0 +1,26 @@
+{
+  "admin": {
+    "label": "Administrador",
+    "description": "Acceso total al sistema",
+    "color": "#FF9500",
+    "level": 4
+  },
+  "lider_directores": {
+    "label": "Líder de Directores",
+    "description": "Gestión de directores y eventos",
+    "color": "#0A84FF",
+    "level": 3
+  },
+  "director": {
+    "label": "Director",
+    "description": "Gestión de canciones y solicitudes",
+    "color": "#32D74B",
+    "level": 2
+  },
+  "musico": {
+    "label": "Músico",
+    "description": "Acceso de solo lectura",
+    "color": "#8E8E93",
+    "level": 1
+  }
+}

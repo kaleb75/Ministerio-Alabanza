@@ -1,0 +1,123 @@
+[
+  {
+    "id": "usr_001",
+    "name": "Admin Sistema",
+    "email": "admin@iglesia.com",
+    "password": "123456",
+    "role": "admin",
+    "title": "Administrador",
+    "initials": "AS",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_002",
+    "name": "Charlie Grajeda",
+    "email": "CharlieGrajeda@iglesia.com",
+    "password": "123456",
+    "role": "lider_directores",
+    "title": "Líder de Directores",
+    "initials": "CG",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_003",
+    "name": "Jesús Morales",
+    "email": "JesusMorales@iglesia.com",
+    "password": "123456",
+    "role": "director",
+    "title": "Director de Alabanza",
+    "initials": "JM",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_004",
+    "name": "Irasema Garcia",
+    "email": "IrasemaGarcia@iglesia.com",
+    "password": "123456",
+    "role": "musico",
+    "title": "Músico",
+    "initials": "IG",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_005",
+    "name": "Samuel Macias",
+    "email": "SamuelMacias@iglesia.com",
+    "password": "123456",
+    "role": "musico",
+    "title": "Músico",
+    "initials": "SM",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_006",
+    "name": "Ana Torres",
+    "email": "AnaTorres@iglesia.com",
+    "password": "123456",
+    "role": "director",
+    "title": "Director de Alabanza",
+    "initials": "AT",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_007",
+    "name": "Alex Velazquez",
+    "email": "AlexVelazquez@iglesia.com",
+    "password": "123456",
+    "role": "director",
+    "title": "Director de Alabanza",
+    "initials": "AV",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_008",
+    "name": "Marco",
+    "email": "Marco@iglesia.com",
+    "password": "123456",
+    "role": "director",
+    "title": "Director de Alabanza",
+    "initials": "MA",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_009",
+    "name": "Ruben",
+    "email": "Ruben@iglesia.com",
+    "password": "123456",
+    "role": "director",
+    "title": "Director de Alabanza",
+    "initials": "RU",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_010",
+    "name": "Victor",
+    "email": "Victor@iglesia.com",
+    "password": "123456",
+    "role": "director",
+    "title": "Director de Alabanza",
+    "initials": "VI",
+    "avatar": null,
+    "active": true
+  },
+  {
+    "id": "usr_011",
+    "name": "Carlos",
+    "email": "Carlos@iglesia.com",
+    "password": "123456",
+    "role": "director",
+    "title": "Director de Alabanza",
+    "initials": "CA",
+    "avatar": null,
+    "active": true
+  }
+]
