@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Search, Check, AlertTriangle } from 'lucide-react';
+import { useState, useMemo, useRef } from 'react';
+import { Search, Check, AlertTriangle, Ban } from 'lucide-react';
 import Modal from '../Modal/Modal';
 import '../Modal/Modal.css';
 import { useApp } from '../../context/AppContext';
@@ -15,7 +15,7 @@ const STATUS_OPTIONS = [
 export default function EventFormModal({ event, onSave, onClose }) {
   const { songs, users, events } = useApp();
 
-  // Map songId → names of OTHER upcoming/in-progress events that already use it
+  // Map songId → array of {title, date, directorName} for OTHER active events that use it
   const conflictMap = useMemo(() => {
     const map = {};
     const activeEvents = events.filter(
@@ -25,7 +25,7 @@ export default function EventFormModal({ event, onSave, onClose }) {
     for (const ev of activeEvents) {
       for (const sid of (ev.songs ?? [])) {
         if (!map[sid]) map[sid] = [];
-        map[sid].push(ev.title);
+        map[sid].push({ title: ev.title, date: ev.date, directorName: ev.directorName });
       }
     }
     return map;
@@ -181,25 +181,23 @@ export default function EventFormModal({ event, onSave, onClose }) {
                 {filteredSongs.map((s) => {
                   const selected  = selectedSongs.includes(s.id);
                   const conflicts = conflictMap[s.id];
+                  const blocked   = !!conflicts;
                   return (
                     <div
                       key={s.id}
-                      className={`song-selector__item${selected ? ' song-selector__item--selected' : ''}${conflicts ? ' song-selector__item--conflict' : ''}`}
-                      onClick={() => toggleSong(s.id)}
+                      className={`song-selector__item${selected ? ' song-selector__item--selected' : ''}${blocked ? ' song-selector__item--blocked' : ''}`}
+                      onClick={() => !blocked && toggleSong(s.id)}
                     >
                       <div className="song-selector__check">
-                        {selected && <Check size={10} style={{ color: '#000' }} />}
+                        {blocked
+                          ? <Ban size={10} style={{ color: 'var(--danger)' }} />
+                          : selected && <Check size={10} style={{ color: '#000' }} />
+                        }
                       </div>
                       <span className="song-selector__item-title">{s.title}</span>
                       {s.key && <span className="song-selector__item-key">{s.key}</span>}
-                      {conflicts && (
-                        <span
-                          className="song-selector__conflict"
-                          title={`Ya está en: ${conflicts.join(', ')}`}
-                        >
-                          <AlertTriangle size={12} />
-                          {conflicts.length === 1 ? '1 culto' : `${conflicts.length} cultos`}
-                        </span>
+                      {blocked && (
+                        <ConflictBadge conflicts={conflicts} />
                       )}
                     </div>
                   );
@@ -242,4 +240,43 @@ export default function EventFormModal({ event, onSave, onClose }) {
       </form>
     </Modal>
   );
+}
+
+function ConflictBadge({ conflicts }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  return (
+    <span
+      ref={ref}
+      className="song-selector__conflict-badge"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+    >
+      <AlertTriangle size={11} />
+      Ya programada
+      {open && (
+        <span className="song-selector__conflict-popup">
+          <strong>Canción ya asignada en:</strong>
+          {conflicts.map((c, i) => (
+            <span key={i} className="song-selector__conflict-row">
+              <span className="song-selector__conflict-event">{c.title}</span>
+              <span className="song-selector__conflict-meta">
+                {c.date && formatDate(c.date)}
+                {c.directorName && ` · ${c.directorName}`}
+              </span>
+            </span>
+          ))}
+        </span>
+      )}
+    </span>
+  );
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
 }

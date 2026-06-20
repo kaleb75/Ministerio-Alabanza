@@ -1,10 +1,19 @@
-import { Sparkles, Music2, Plus, X, ArrowUp, ArrowDown, RefreshCw, CheckCircle, AlertTriangle, Star } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Sparkles, Music2, Plus, X, ArrowUp, ArrowDown, CheckCircle, AlertTriangle, Star, CalendarCheck, ChevronDown } from 'lucide-react';
 import { useWorshipPlanner } from '../../context/WorshipPlannerContext';
+import { useApp } from '../../context/AppContext';
 import { SERVICE_PROFILES } from '../../services/worshipFlowEngine';
 import './Planner.css';
 
 const FLOW_COLOR = (s) => s >= 80 ? 'var(--success)' : s >= 60 ? 'var(--info)' : s >= 40 ? 'var(--warning)' : 'var(--danger)';
 const FLOW_LABEL = (s) => s >= 80 ? 'Excelente' : s >= 60 ? 'Bueno' : s >= 40 ? 'Regular' : 'Mejorable';
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${parseInt(d)} ${months[parseInt(m) - 1]} ${y}`;
+}
 
 export default function Planner() {
   const {
@@ -15,6 +24,36 @@ export default function Planner() {
     suggestions, generateSet,
     flowScore, setDetails,
   } = useWorshipPlanner();
+
+  const { events, updateEvent } = useApp();
+
+  const upcomingEvents = useMemo(
+    () => events.filter((e) => e.status === 'upcoming' || e.status === 'in_progress')
+                .sort((a, b) => new Date(a.date) - new Date(b.date)),
+    [events]
+  );
+
+  const [exportEventId, setExportEventId] = useState('');
+  const [exporting, setExporting]         = useState(false);
+  const [exportDone, setExportDone]       = useState(false);
+
+  async function handleExport() {
+    if (!exportEventId || currentSet.length === 0) return;
+    const event = events.find((e) => String(e.id) === String(exportEventId));
+    if (!event) return;
+    setExporting(true);
+    try {
+      const existing = Array.isArray(event.songs) ? event.songs : [];
+      const merged = [...new Set([...existing, ...currentSet])];
+      await updateEvent(event.id, { songs: merged });
+      setExportDone(true);
+      setTimeout(() => setExportDone(false), 3000);
+    } catch (err) {
+      alert('Error al exportar: ' + (err?.message ?? ''));
+    } finally {
+      setExporting(false);
+    }
+  }
 
   const serviceTypes = Object.keys(SERVICE_PROFILES);
 
@@ -153,6 +192,45 @@ export default function Planner() {
               </div>
             )}
           </div>
+
+          {/* Export to event */}
+          {currentSet.length > 0 && upcomingEvents.length > 0 && (
+            <div className="card planner__export-card">
+              <div className="planner__export-title">
+                <CalendarCheck size={15} />
+                Exportar set al culto
+              </div>
+              <p className="planner__export-hint">
+                Envía las {currentSet.length} canciones del set actual a un culto próximo.
+              </p>
+              <div className="planner__export-row">
+                <select
+                  className="form-select planner__export-select"
+                  value={exportEventId}
+                  onChange={(e) => setExportEventId(e.target.value)}
+                >
+                  <option value="">Seleccionar culto...</option>
+                  {upcomingEvents.map((ev) => (
+                    <option key={ev.id} value={ev.id}>
+                      {ev.title} — {formatDate(ev.date)}{ev.directorName ? ` · ${ev.directorName}` : ''}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className={`btn planner__export-btn${exportDone ? ' planner__export-btn--done' : ' btn-primary'}`}
+                  onClick={handleExport}
+                  disabled={!exportEventId || exporting || exportDone}
+                >
+                  {exportDone
+                    ? <><CheckCircle size={14} /> Exportado</>
+                    : exporting
+                    ? 'Exportando...'
+                    : <><CalendarCheck size={14} /> Exportar</>
+                  }
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Suggestions */}
           {suggestions.length > 0 && (
