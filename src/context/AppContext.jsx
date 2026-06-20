@@ -1,153 +1,143 @@
-import { createContext, useContext, useState, useCallback, useRef } from 'react';
-import mockSongHistory from '../data/mockSongHistory.json';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import * as songSvc from '../services/songService';
 import * as eventSvc from '../services/eventService';
 import * as userSvc from '../services/userService';
-import { fileDB } from '../services/fileSystemDB';
-
-const HISTORY_KEY = 'ministry_song_history';
-
-function loadHistory() {
-  try {
-    const s = localStorage.getItem(HISTORY_KEY);
-    return s ? JSON.parse(s) : mockSongHistory;
-  } catch { return mockSongHistory; }
-}
-function saveHistory(h) {
-  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); } catch {}
-}
-
-// Fire-and-forget file sync — never blocks the UI
-async function syncFile(table, data) {
-  if (fileDB.isConnected) {
-    try { await fileDB.writeTable(table, data); } catch {}
-  }
-}
+import { supabase } from '../lib/supabase';
 
 const AppContext = createContext(null);
 
 export const AppProvider = ({ children }) => {
-  const [songs, setSongs] = useState(() => songSvc.getAll());
-  const [events, setEvents] = useState(() => eventSvc.getAll());
-  const [users, setUsers] = useState(() => userSvc.getAll());
-  const [songHistory, setSongHistory] = useState(() => loadHistory());
+  const [songs, setSongs]             = useState([]);
+  const [events, setEvents]           = useState([]);
+  const [users, setUsers]             = useState([]);
+  const [songHistory, setSongHistory] = useState([]);
+  const [loading, setLoading]         = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
-  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  const closeSidebar  = useCallback(() => setSidebarOpen(false), []);
+
+  // ── Initial load from Supabase ─────────────────────────────────────────────
+  useEffect(() => {
+    Promise.all([
+      songSvc.getAll(),
+      eventSvc.getAll(),
+      userSvc.getAll(),
+      supabase.from('song_history').select('*').order('date', { ascending: false }),
+    ])
+      .then(([s, e, u, histResult]) => {
+        setSongs(s);
+        setEvents(e);
+        setUsers(u);
+        setSongHistory(
+          (histResult.data || []).map((r) => ({
+            id: r.id,
+            songId: r.song_id,
+            date: r.date,
+            eventTitle: r.event_title,
+            eventType: r.event_type,
+            directorName: r.director_name,
+          }))
+        );
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   // ── Song CRUD ──────────────────────────────────────────────────────────────
-  const addSong = useCallback((data) => {
-    const created = songSvc.create(data);
-    const all = songSvc.getAll();
-    setSongs(all);
-    syncFile('songs', all);
+  const addSong = useCallback(async (data) => {
+    const created = await songSvc.create(data);
+    setSongs(await songSvc.getAll());
     return created;
   }, []);
 
-  const updateSong = useCallback((id, changes) => {
-    const updated = songSvc.update(id, changes);
-    if (updated) {
-      const all = songSvc.getAll();
-      setSongs(all);
-      syncFile('songs', all);
-    }
+  const updateSong = useCallback(async (id, changes) => {
+    const updated = await songSvc.update(id, changes);
+    setSongs(await songSvc.getAll());
     return updated;
   }, []);
 
-  const deleteSong = useCallback((id) => {
-    songSvc.remove(id);
-    const all = songSvc.getAll();
-    setSongs(all);
-    syncFile('songs', all);
+  const deleteSong = useCallback(async (id) => {
+    await songSvc.remove(id);
+    setSongs(await songSvc.getAll());
   }, []);
 
-  const refreshSongs = useCallback(() => setSongs(songSvc.getAll()), []);
+  const refreshSongs = useCallback(async () => {
+    setSongs(await songSvc.getAll());
+  }, []);
 
   // ── Event CRUD ─────────────────────────────────────────────────────────────
-  const addEvent = useCallback((data) => {
-    const created = eventSvc.create(data);
-    const all = eventSvc.getAll();
-    setEvents(all);
-    syncFile('events', all);
+  const addEvent = useCallback(async (data) => {
+    const created = await eventSvc.create(data);
+    setEvents(await eventSvc.getAll());
     return created;
   }, []);
 
-  const updateEvent = useCallback((id, changes) => {
-    const updated = eventSvc.update(id, changes);
-    if (updated) {
-      const all = eventSvc.getAll();
-      setEvents(all);
-      syncFile('events', all);
-    }
+  const updateEvent = useCallback(async (id, changes) => {
+    const updated = await eventSvc.update(id, changes);
+    setEvents(await eventSvc.getAll());
     return updated;
   }, []);
 
-  const deleteEvent = useCallback((id) => {
-    eventSvc.remove(id);
-    const all = eventSvc.getAll();
-    setEvents(all);
-    syncFile('events', all);
+  const deleteEvent = useCallback(async (id) => {
+    await eventSvc.remove(id);
+    setEvents(await eventSvc.getAll());
   }, []);
 
-  const updateEventStatus = useCallback((id, status) => {
-    eventSvc.updateStatus(id, status);
-    const all = eventSvc.getAll();
-    setEvents(all);
-    syncFile('events', all);
+  const updateEventStatus = useCallback(async (id, status) => {
+    await eventSvc.updateStatus(id, status);
+    setEvents(await eventSvc.getAll());
   }, []);
 
   // ── User CRUD ──────────────────────────────────────────────────────────────
-  const addUser = useCallback((data) => {
-    const created = userSvc.create(data);
-    const all = userSvc.getAll();
-    setUsers(all);
-    syncFile('users', all);
+  const addUser = useCallback(async (data) => {
+    const created = await userSvc.create(data);
+    setUsers(await userSvc.getAll());
     return created;
   }, []);
 
-  const updateUser = useCallback((id, changes) => {
-    const updated = userSvc.update(id, changes);
-    if (updated) {
-      const all = userSvc.getAll();
-      setUsers(all);
-      syncFile('users', all);
-    }
+  const updateUser = useCallback(async (id, changes) => {
+    const updated = await userSvc.update(id, changes);
+    setUsers(await userSvc.getAll());
     return updated;
   }, []);
 
-  const deleteUser = useCallback((id) => {
-    userSvc.remove(id);
-    const all = userSvc.getAll();
-    setUsers(all);
-    syncFile('users', all);
+  const deleteUser = useCallback(async (id) => {
+    await userSvc.remove(id);
+    setUsers(await userSvc.getAll());
   }, []);
 
-  const toggleUserActive = useCallback((id, active) => {
-    active ? userSvc.activate(id) : userSvc.deactivate(id);
-    const all = userSvc.getAll();
-    setUsers(all);
-    syncFile('users', all);
+  const toggleUserActive = useCallback(async (id, active) => {
+    active ? await userSvc.activate(id) : await userSvc.deactivate(id);
+    setUsers(await userSvc.getAll());
   }, []);
 
   // ── Song History ───────────────────────────────────────────────────────────
-  const addSongHistory = useCallback((entry) => {
-    const newEntry = { id: `hist_${Date.now()}`, ...entry };
-    setSongHistory((prev) => {
-      const updated = [newEntry, ...prev];
-      saveHistory(updated);
-      syncFile('songHistory', updated);
-      return updated;
+  const addSongHistory = useCallback(async (entry) => {
+    const id = `hist_${Date.now()}`;
+    await supabase.from('song_history').insert({
+      id,
+      song_id: entry.songId,
+      date: entry.date,
+      event_title: entry.eventTitle,
+      event_type: entry.eventType,
+      director_name: entry.directorName,
     });
+    const newEntry = { id, ...entry };
+    setSongHistory((prev) => [newEntry, ...prev]);
     return newEntry;
   }, []);
 
-  // ── Refresh all from localStorage (called after FileDB loads files) ────────
-  const refreshAll = useCallback(() => {
-    setSongs(songSvc.getAll());
-    setEvents(eventSvc.getAll());
-    setUsers(userSvc.getAll());
-    setSongHistory(loadHistory());
+  // ── Refresh all from Supabase ──────────────────────────────────────────────
+  const refreshAll = useCallback(async () => {
+    const [s, e, u] = await Promise.all([
+      songSvc.getAll(),
+      eventSvc.getAll(),
+      userSvc.getAll(),
+    ]);
+    setSongs(s);
+    setEvents(e);
+    setUsers(u);
   }, []);
 
   const upcomingEvents = events
@@ -160,6 +150,7 @@ export const AppProvider = ({ children }) => {
     <AppContext.Provider value={{
       songs, events, users, songHistory,
       upcomingEvents, nextEvent,
+      loading,
       addSong, updateSong, deleteSong, refreshSongs,
       addEvent, updateEvent, deleteEvent, updateEventStatus,
       addUser, updateUser, deleteUser, toggleUserActive,

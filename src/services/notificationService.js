@@ -1,66 +1,66 @@
-import mockNotifications from '../data/mockNotifications.json';
+import { supabase } from '../lib/supabase';
 
-const STORAGE_KEY = 'ministry_notifications';
-
-function loadNotifications() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : mockNotifications;
-  } catch {
-    return mockNotifications;
-  }
-}
-
-function saveNotifications(notifications) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
-  } catch {}
-}
-
-export function getNotificationsForUser(userId, role) {
-  return loadNotifications()
-    .filter((n) => {
-      const roleMatch = n.recipientRoles?.includes(role);
-      const userMatch = !n.recipientUserId || n.recipientUserId === userId;
-      return roleMatch && userMatch;
-    })
-    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
-export function getUnreadCount(userId, role) {
-  return getNotificationsForUser(userId, role).filter((n) => !n.isRead).length;
-}
-
-export function markAsRead(notificationId) {
-  const notifications = loadNotifications();
-  const idx = notifications.findIndex((n) => n.id === notificationId);
-  if (idx === -1) return;
-  notifications[idx] = { ...notifications[idx], isRead: true };
-  saveNotifications(notifications);
-}
-
-export function markAllAsRead(userId, role) {
-  const notifications = loadNotifications();
-  const updated = notifications.map((n) => {
-    const roleMatch = n.recipientRoles?.includes(role);
-    const userMatch = !n.recipientUserId || n.recipientUserId === userId;
-    if (roleMatch && userMatch) return { ...n, isRead: true };
-    return n;
-  });
-  saveNotifications(updated);
-}
-
-export function createNotification(data) {
-  const notifications = loadNotifications();
-  const newNotif = {
-    ...data,
-    id: 'notif-' + Date.now(),
-    isRead: false,
-    createdAt: new Date().toISOString(),
+function fromRow(r) {
+  return {
+    id: r.id,
+    type: r.type,
+    title: r.title,
+    body: r.body,
+    relatedId: r.related_id,
+    recipientRoles: r.recipient_roles || [],
+    recipientUserId: r.recipient_user_id,
+    isRead: r.is_read,
+    createdAt: r.created_at,
   };
-  notifications.unshift(newNotif);
-  saveNotifications(notifications);
-  return newNotif;
+}
+
+export async function getNotificationsForUser(userId, role) {
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .contains('recipient_roles', [role])
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data.map(fromRow).filter((n) => !n.recipientUserId || n.recipientUserId === userId);
+}
+
+export async function getUnreadCount(userId, role) {
+  const notifs = await getNotificationsForUser(userId, role);
+  return notifs.filter((n) => !n.isRead).length;
+}
+
+export async function markAsRead(notificationId) {
+  const { error } = await supabase
+    .from('notifications').update({ is_read: true }).eq('id', notificationId);
+  if (error) throw error;
+}
+
+export async function markAllAsRead(userId, role) {
+  const notifs = await getNotificationsForUser(userId, role);
+  const ids = notifs.filter((n) => !n.isRead).map((n) => n.id);
+  if (!ids.length) return;
+  const { error } = await supabase
+    .from('notifications').update({ is_read: true }).in('id', ids);
+  if (error) throw error;
+}
+
+export async function createNotification(data) {
+  const { data: row, error } = await supabase
+    .from('notifications')
+    .insert({
+      id: 'notif-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      type: data.type,
+      title: data.title,
+      body: data.body,
+      related_id: data.relatedId || null,
+      recipient_roles: data.recipientRoles || [],
+      recipient_user_id: data.recipientUserId || null,
+      is_read: false,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return fromRow(row);
 }
 
 export const NOTIFICATION_TYPES = {

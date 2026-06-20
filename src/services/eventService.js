@@ -1,64 +1,76 @@
-import mockEvents from '../data/mockEvents.json';
+import { supabase } from '../lib/supabase';
 
-const KEY = 'ministry_events';
-
-function load() {
-  try {
-    const s = localStorage.getItem(KEY);
-    return s ? JSON.parse(s) : mockEvents;
-  } catch {
-    return mockEvents;
-  }
-}
-
-function save(events) {
-  try { localStorage.setItem(KEY, JSON.stringify(events)); } catch {}
-}
-
-export function getAll() {
-  return load();
-}
-
-export function getById(id) {
-  return load().find((e) => e.id === id) ?? null;
-}
-
-export function create(data) {
-  const events = load();
-  const maxId = events.reduce((m, e) => Math.max(m, Number(e.id) || 0), 0);
-  const newEvent = {
-    id: maxId + 1,
-    title: data.title.trim(),
-    date: data.date,
-    time: data.time || '10:00',
-    type: data.type || 'Culto Principal',
-    directorId: data.directorId || null,
-    directorName: data.directorName || '',
-    songs: Array.isArray(data.songs) ? data.songs : [],
-    status: data.status || 'upcoming',
-    notes: data.notes?.trim() || '',
+function fromRow(r) {
+  return {
+    id: r.id,
+    title: r.title,
+    date: r.date,
+    time: r.time,
+    type: r.type,
+    directorId: r.director_id,
+    directorName: r.director_name || '',
+    songs: r.songs || [],
+    status: r.status,
+    notes: r.notes || '',
   };
-  events.push(newEvent);
-  save(events);
-  return newEvent;
 }
 
-export function update(id, changes) {
-  const events = load();
-  const idx = events.findIndex((e) => e.id === id);
-  if (idx === -1) return null;
-  const updated = { ...events[idx], ...changes, id };
-  events[idx] = updated;
-  save(events);
-  return updated;
+export async function getAll() {
+  const { data, error } = await supabase.from('events').select('*').order('date', { ascending: false });
+  if (error) throw error;
+  return data.map(fromRow);
 }
 
-export function remove(id) {
-  const events = load();
-  save(events.filter((e) => e.id !== id));
+export async function getById(id) {
+  const { data, error } = await supabase.from('events').select('*').eq('id', id).single();
+  if (error) return null;
+  return fromRow(data);
+}
+
+export async function create(data) {
+  const { data: row, error } = await supabase
+    .from('events')
+    .insert({
+      title: data.title.trim(),
+      date: data.date,
+      time: data.time || '10:00',
+      type: data.type || 'Culto Principal',
+      director_id: data.directorId || null,
+      director_name: data.directorName || '',
+      songs: Array.isArray(data.songs) ? data.songs : [],
+      status: data.status || 'upcoming',
+      notes: data.notes?.trim() || '',
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return fromRow(row);
+}
+
+export async function update(id, changes) {
+  const patch = {};
+  if (changes.title !== undefined)        patch.title         = changes.title;
+  if (changes.date !== undefined)         patch.date          = changes.date;
+  if (changes.time !== undefined)         patch.time          = changes.time;
+  if (changes.type !== undefined)         patch.type          = changes.type;
+  if (changes.directorId !== undefined)   patch.director_id   = changes.directorId;
+  if (changes.directorName !== undefined) patch.director_name = changes.directorName;
+  if (changes.songs !== undefined)        patch.songs         = changes.songs;
+  if (changes.status !== undefined)       patch.status        = changes.status;
+  if (changes.notes !== undefined)        patch.notes         = changes.notes;
+
+  const { data: row, error } = await supabase
+    .from('events').update(patch).eq('id', id).select().single();
+  if (error) throw error;
+  return fromRow(row);
+}
+
+export async function remove(id) {
+  const { error } = await supabase.from('events').delete().eq('id', id);
+  if (error) throw error;
   return true;
 }
 
-export function updateStatus(id, status) {
+export async function updateStatus(id, status) {
   return update(id, { status });
 }

@@ -1,20 +1,32 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { authenticate, saveSession, restoreSession, clearSession } from '../services/authService';
+import { getById } from '../services/userService';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]       = useState(null);
+  const [user, setUser]           = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const saved = restoreSession();
-    if (saved) setUser(saved);
-    setIsLoading(false);
+    if (!saved) { setIsLoading(false); return; }
+
+    getById(saved.id)
+      .then((fresh) => {
+        if (!fresh || fresh.active === false) {
+          clearSession();
+        } else {
+          const { password: _pw, ...safeUser } = fresh;
+          setUser(safeUser);
+        }
+      })
+      .catch(() => clearSession())
+      .finally(() => setIsLoading(false));
   }, []);
 
   const login = useCallback(async (email, password) => {
-    const authUser = authenticate(email, password);
+    const authUser = await authenticate(email, password);
     if (!authUser) throw new Error('Credenciales incorrectas');
     saveSession(authUser);
     setUser(authUser);

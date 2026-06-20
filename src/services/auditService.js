@@ -1,42 +1,55 @@
-import mockAuditLogs from '../data/mockAuditLogs.json';
+import { supabase } from '../lib/supabase';
 
-const STORAGE_KEY = 'ministry_audit_logs';
-
-function loadLogs() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : mockAuditLogs;
-  } catch {
-    return mockAuditLogs;
-  }
-}
-
-function saveLogs(logs) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-  } catch {}
-}
-
-export function getAllAuditLogs() {
-  return loadLogs().sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-}
-
-export function getAuditLogsForEntity(entityId) {
-  return loadLogs()
-    .filter((l) => l.targetEntityId === String(entityId))
-    .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-}
-
-export function createAuditLog(entry) {
-  const logs = loadLogs();
-  const newLog = {
-    ...entry,
-    id: 'log-' + Date.now(),
-    timestamp: new Date().toISOString(),
+function fromRow(r) {
+  return {
+    id: r.id,
+    actionType: r.action_type,
+    performedBy: r.performed_by,
+    performedByName: r.performed_by_name,
+    targetEntity: r.target_entity,
+    targetEntityId: r.target_entity_id,
+    description: r.description,
+    previousValue: r.previous_value,
+    newValue: r.new_value,
+    timestamp: r.timestamp,
   };
-  logs.unshift(newLog);
-  saveLogs(logs);
-  return newLog;
+}
+
+export async function getAllAuditLogs() {
+  const { data, error } = await supabase
+    .from('audit_logs').select('*').order('timestamp', { ascending: false });
+  if (error) throw error;
+  return data.map(fromRow);
+}
+
+export async function getAuditLogsForEntity(entityId) {
+  const { data, error } = await supabase
+    .from('audit_logs')
+    .select('*')
+    .eq('target_entity_id', String(entityId))
+    .order('timestamp', { ascending: false });
+  if (error) throw error;
+  return data.map(fromRow);
+}
+
+export async function createAuditLog(entry) {
+  const { data: row, error } = await supabase
+    .from('audit_logs')
+    .insert({
+      id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+      action_type: entry.actionType,
+      performed_by: entry.performedBy,
+      performed_by_name: entry.performedByName,
+      target_entity: entry.targetEntity,
+      target_entity_id: String(entry.targetEntityId || ''),
+      description: entry.description || '',
+      previous_value: entry.previousValue ?? null,
+      new_value: entry.newValue ?? null,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return fromRow(row);
 }
 
 export const ACTION_TYPES = {

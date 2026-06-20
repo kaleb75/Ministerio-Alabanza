@@ -1,21 +1,27 @@
-import mockUsers from '../data/mockUsers.json';
+import { supabase } from '../lib/supabase';
 
 const STORAGE_KEYS = {
   USER: 'ministry_auth_user',
   TOKEN: 'ministry_auth_token',
 };
 
-export function authenticate(email, password) {
-  const found = mockUsers.find(
-    (u) => u.email === email && u.password === password && u.active
-  );
-  if (!found) return null;
-  const { password: _pw, ...safeUser } = found;
+export async function authenticate(email, password) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .ilike('email', email)
+    .eq('active', true)
+    .single();
+
+  if (error || !data) return null;
+  if (data.password !== password) return null;
+
+  const { password: _pw, ...safeUser } = data;
   return safeUser;
 }
 
 export function saveSession(user) {
-  const token = `mock_${user.id}_${user.role}`;
+  const token = `token_${user.id}_${user.role}`;
   try {
     localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
     localStorage.setItem(STORAGE_KEYS.TOKEN, token);
