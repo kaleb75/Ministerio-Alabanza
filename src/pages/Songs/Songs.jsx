@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Music2, Plus, Pencil, Trash2, Sparkles, TrendingDown,
-  Search, Cloud,
+  Search, Cloud, CalendarPlus, Check,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useSongIntelligence } from '../../context/SongIntelligenceContext';
@@ -24,7 +24,7 @@ const INTEL_TABS = [
 ];
 
 export default function Songs() {
-  const { songs, addSong, updateSong, deleteSong } = useApp();
+  const { songs, events, addSong, updateSong, deleteSong, updateEvent } = useApp();
   const { recommendations, forgottenSongs } = useSongIntelligence();
   const { user } = useAuth();
 
@@ -35,8 +35,15 @@ export default function Songs() {
   const [sectionTab, setSectionTab]   = useState('catalog');
   const [activeTab, setActiveTab]     = useState('all');
   const [query, setQuery]             = useState('');
-  const [formModal, setFormModal]     = useState(null); // null | 'create' | song
+  const [formModal, setFormModal]     = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [addedToEvent, setAddedToEvent] = useState({}); // songId → eventId
+
+  // Upcoming events available to add songs to
+  const upcomingEvents = useMemo(
+    () => events.filter((e) => e.status === 'upcoming').sort((a, b) => new Date(a.date) - new Date(b.date)),
+    [events]
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -72,6 +79,25 @@ export default function Songs() {
     setDeleteTarget(null);
   }
 
+  async function handleAddToEvent(song, eventId) {
+    const event = events.find((e) => e.id === eventId);
+    if (!event) return;
+    const currentSongs = Array.isArray(event.songs) ? event.songs : [];
+    if (currentSongs.includes(song.id)) {
+      setAddedToEvent((prev) => ({ ...prev, [song.id]: eventId }));
+      return;
+    }
+    try {
+      await updateEvent(event.id, { songs: [...currentSongs, song.id] });
+      setAddedToEvent((prev) => ({ ...prev, [song.id]: eventId }));
+      setTimeout(() => setAddedToEvent((prev) => { const n = { ...prev }; delete n[song.id]; return n; }), 2500);
+    } catch (err) {
+      alert('Error al agregar al culto: ' + (err?.message ?? ''));
+    }
+  }
+
+  const showAddToEvent = activeTab === 'recommended' || activeTab === 'forgotten';
+
   const displayList =
     activeTab === 'recommended' ? recommendations :
     activeTab === 'forgotten'   ? forgottenSongs  :
@@ -102,21 +128,17 @@ export default function Songs() {
             className={`songs-tab${sectionTab === id ? ' songs-tab--active' : ''}`}
             onClick={() => setSectionTab(id)}
           >
-            {Icon && <Icon size={13} style={{ marginRight: 4 }} />}
+            {Icon && <Icon size={14} />}
             {label}
           </button>
         ))}
       </div>
 
-      {/* ── Import tab ── */}
-      {sectionTab === 'import' && (
-        <OneDriveImporter />
-      )}
+      {sectionTab === 'import' && <OneDriveImporter />}
 
-      {/* ── Catalog tab ── */}
       {sectionTab === 'catalog' && (
         <>
-          {/* Intel tabs */}
+          {/* ── Intel tabs ── */}
           <div className="songs-intel-tabs">
             {INTEL_TABS.map(({ id, label, icon: Icon }) => (
               <button
@@ -133,12 +155,13 @@ export default function Songs() {
             ))}
           </div>
 
-          {/* Search (all tab only) */}
+          {/* ── Search (only on 'all' tab) ── */}
           {activeTab === 'all' && (
-            <div className="songs-search-bar">
-              <Search size={15} className="songs-search-bar__icon" />
+            <div className="songs-search">
+              <Search size={16} className="songs-search__icon" />
               <input
-                className="songs-search-bar__input"
+                type="text"
+                className="songs-search__input"
                 placeholder="Buscar por título, autor o etiqueta..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -146,11 +169,29 @@ export default function Songs() {
             </div>
           )}
 
-          {/* Song grid */}
+          {/* ── Tab context hint ── */}
+          {activeTab === 'recommended' && (
+            <p className="songs-intel-hint">
+              <Sparkles size={13} /> Canciones que no se han usado recientemente y tienen buena frecuencia histórica.
+              {upcomingEvents.length > 0 && ' Agrégalas directamente a un culto próximo.'}
+            </p>
+          )}
+          {activeTab === 'forgotten' && (
+            <p className="songs-intel-hint">
+              <TrendingDown size={13} /> Canciones que llevan mucho tiempo sin usarse.
+              {upcomingEvents.length > 0 && ' Considera recuperarlas en un próximo culto.'}
+            </p>
+          )}
+
+          {/* ── Song grid ── */}
           {displayList.length === 0 ? (
             <div className="card empty-state">
               <Music2 size={36} className="empty-state-icon" />
-              <p>{activeTab === 'all' && query ? `Sin resultados para "${query}"` : 'Sin canciones'}</p>
+              <p>
+                {activeTab === 'recommended' ? 'No hay recomendaciones en este momento' :
+                 activeTab === 'forgotten'   ? 'No hay canciones olvidadas' :
+                 'No se encontraron canciones'}
+              </p>
             </div>
           ) : (
             <div className="songs-grid stagger-children">
@@ -162,6 +203,10 @@ export default function Songs() {
                   canDelete={canDelete}
                   onEdit={() => setFormModal(song)}
                   onDelete={() => setDeleteTarget(song)}
+                  showAddToEvent={showAddToEvent}
+                  upcomingEvents={upcomingEvents}
+                  addedEventId={addedToEvent[song.id]}
+                  onAddToEvent={(eventId) => handleAddToEvent(song, eventId)}
                 />
               ))}
             </div>
@@ -190,8 +235,20 @@ export default function Songs() {
   );
 }
 
-function SongCard({ song, canEdit, canDelete, onEdit, onDelete }) {
+// ── SongCard ──────────────────────────────────────────────────────────────────
+function SongCard({ song, canEdit, canDelete, onEdit, onDelete, showAddToEvent, upcomingEvents = [], addedEventId, onAddToEvent }) {
   const { title, author, key, genre, timesUsed, tags = [] } = song;
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const pickerRef = useRef(null);
+
+  useEffect(() => {
+    if (!pickerOpen) return;
+    function handleClick(e) {
+      if (pickerRef.current && !pickerRef.current.contains(e.target)) setPickerOpen(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [pickerOpen]);
 
   return (
     <article className="song-card card">
@@ -243,6 +300,44 @@ function SongCard({ song, canEdit, canDelete, onEdit, onDelete }) {
           </div>
         )}
       </div>
+
+      {/* ── Agregar a culto ── */}
+      {showAddToEvent && upcomingEvents.length > 0 && (
+        <div className="song-card__add-event" ref={pickerRef}>
+          {addedEventId ? (
+            <span className="song-card__added-badge">
+              <Check size={12} /> Agregado
+            </span>
+          ) : (
+            <>
+              <button
+                className="song-card__add-btn"
+                onClick={() => upcomingEvents.length === 1
+                  ? onAddToEvent(upcomingEvents[0].id)
+                  : setPickerOpen((v) => !v)
+                }
+              >
+                <CalendarPlus size={13} />
+                Agregar a culto
+              </button>
+              {pickerOpen && (
+                <div className="song-card__event-picker">
+                  {upcomingEvents.map((ev) => (
+                    <button
+                      key={ev.id}
+                      className="song-card__event-option"
+                      onClick={() => { onAddToEvent(ev.id); setPickerOpen(false); }}
+                    >
+                      <span className="song-card__event-option-title">{ev.title}</span>
+                      <span className="song-card__event-option-date">{ev.date}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </article>
   );
 }
