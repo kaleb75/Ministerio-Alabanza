@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Menu, Bell, HardDrive, FolderOpen, AlertCircle, Loader } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { Menu, Bell } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { useWorkflow } from '../../context/WorkflowContext';
-import { useFileDB } from '../../context/FileDBContext';
 import NotificationCenter from '../NotificationCenter/NotificationCenter';
 import { today } from '../../utils/dateUtils';
 import { ROUTES } from '../../utils/constants';
@@ -24,92 +23,12 @@ const PAGE_TITLES = {
 
 export default function Topbar() {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const { toggleSidebar } = useApp();
   const { user } = useAuth();
   const { unreadCount } = useWorkflow();
-  const { status, folderName, isSupported, isConnected, setup, regrant } = useFileDB();
   const [showNotifications, setShowNotifications] = useState(false);
-  const [setupLoading, setSetupLoading] = useState(false);
 
   const pageTitle = PAGE_TITLES[pathname] ?? 'Ministerio';
-
-  async function handleStorageClick() {
-    if (status === 'reconnect') {
-      setSetupLoading(true);
-      await regrant();
-      setSetupLoading(false);
-    } else if (!isConnected && isSupported) {
-      setSetupLoading(true);
-      await setup();
-      setSetupLoading(false);
-    } else {
-      navigate(ROUTES.SETTINGS);
-    }
-  }
-
-  // ── Storage indicator ───────────────────────────────────────────────────
-  function StorageChip() {
-    if (setupLoading) {
-      return (
-        <div className="topbar__storage topbar__storage--loading" title="Conectando...">
-          <Loader size={12} className="topbar__storage-spin" />
-          <span>Conectando</span>
-        </div>
-      );
-    }
-
-    if (!isSupported) {
-      return (
-        <button
-          className="topbar__storage topbar__storage--warn"
-          onClick={() => navigate(ROUTES.SETTINGS)}
-          title="Datos solo en navegador. Click para ver configuración."
-        >
-          <AlertCircle size={12} />
-          <span>Navegador</span>
-        </button>
-      );
-    }
-
-    if (status === 'reconnect') {
-      return (
-        <button
-          className="topbar__storage topbar__storage--warn"
-          onClick={handleStorageClick}
-          title="Carpeta desconectada. Click para reconectar."
-        >
-          <AlertCircle size={12} />
-          <span>Reconectar</span>
-        </button>
-      );
-    }
-
-    if (!isConnected) {
-      return (
-        <button
-          className="topbar__storage topbar__storage--warn"
-          onClick={handleStorageClick}
-          title="Sin carpeta de datos. Click para configurar."
-        >
-          <FolderOpen size={12} />
-          <span>Seleccionar carpeta</span>
-        </button>
-      );
-    }
-
-    // Connected ✓
-    return (
-      <button
-        className="topbar__storage topbar__storage--ok"
-        onClick={() => navigate(ROUTES.SETTINGS)}
-        title={`Datos en carpeta: ${folderName}`}
-      >
-        <HardDrive size={12} />
-        <span className="topbar__storage-name">{folderName}</span>
-      </button>
-    );
-  }
 
   return (
     <header className="topbar">
@@ -128,9 +47,6 @@ export default function Topbar() {
       </div>
 
       <div className="topbar__right">
-        {/* Storage indicator */}
-        <StorageChip />
-
         <div className="topbar__notif-wrap">
           <button
             className="topbar__icon-btn"
