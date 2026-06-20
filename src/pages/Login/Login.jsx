@@ -1,36 +1,21 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Music, Eye, EyeOff, LogIn } from 'lucide-react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ROUTES } from '../../utils/constants';
-import mockRoles from '../../data/mockRoles.json';
 import './Login.css';
 
-const DEMO_USERS = [
-  { email: 'admin@iglesia.com',    name: 'Admin',   role: 'admin' },
-  { email: 'charlie@iglesia.com',  name: 'Charlie', role: 'lider_directores' },
-  { email: 'director@iglesia.com', name: 'María',   role: 'director' },
-  { email: 'musico@iglesia.com',   name: 'Luis',    role: 'musico' },
-];
-
-const ROLE_COLORS = {
-  admin:            { bg: 'rgba(255,149,0,0.15)',   text: '#FF9500' },
-  lider_directores: { bg: 'rgba(10,132,255,0.15)',  text: '#0A84FF' },
-  director:         { bg: 'rgba(50,215,75,0.15)',   text: '#32D74B' },
-  musico:           { bg: 'rgba(142,142,147,0.15)', text: '#8E8E93' },
-};
-
 export default function Login() {
-  const [email, setEmail]           = useState('');
-  const [password, setPassword]     = useState('');
-  const [showPw, setShowPw]         = useState(false);
-  const [isLoading, setIsLoading]   = useState(false);
-  const [error, setError]           = useState('');
+  const [email, setEmail]         = useState('');
+  const [password, setPassword]   = useState('');
+  const [showPw, setShowPw]       = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError]         = useState('');
 
-  const { login }    = useAuth();
-  const navigate     = useNavigate();
-  const location     = useLocation();
-  const from         = location.state?.from?.pathname ?? ROUTES.DASHBOARD;
+  const { login }  = useAuth();
+  const navigate   = useNavigate();
+  const location   = useLocation();
+  const from       = location.state?.from?.pathname ?? ROUTES.DASHBOARD;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,13 +32,11 @@ export default function Login() {
     }
   };
 
-  const fillDemo = (u) => { setEmail(u.email); setPassword('123456'); setError(''); };
-
   return (
     <div className="login">
       <div className="login__header">
         <div className="login__logo-wrap">
-          <Music size={28} />
+          <img src="/favicon-192.png" alt="Logo" className="login__logo-img" />
         </div>
         <h1 className="login__title">Ministerio de Alabanza</h1>
         <p className="login__subtitle">Inicia sesión para continuar</p>
@@ -110,36 +93,6 @@ export default function Login() {
           }
         </button>
       </form>
-
-      <div className="login__demo">
-        <div className="login__demo-label">Usuarios de demostración</div>
-        <div className="login__demo-grid">
-          {DEMO_USERS.map((u) => {
-            const c = ROLE_COLORS[u.role];
-            const roleLabel = mockRoles[u.role]?.label;
-            return (
-              <button
-                key={u.email}
-                type="button"
-                className={`login__demo-btn${email === u.email ? ' login__demo-btn--active' : ''}`}
-                onClick={() => fillDemo(u)}
-              >
-                <div
-                  className="login__demo-avatar"
-                  style={{ background: c?.bg, color: c?.text }}
-                >
-                  {u.name.charAt(0)}
-                </div>
-                <div className="login__demo-meta">
-                  <span className="login__demo-name">{u.name}</span>
-                  <span className="login__demo-role">{roleLabel}</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-        <p className="login__demo-hint">Contraseña: <code>123456</code></p>
-      </div>
     </div>
   );
 }
