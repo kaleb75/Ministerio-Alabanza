@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   CalendarDays, Plus, Pencil, Trash2,
-  CheckCircle, XCircle, Clock, ChevronDown,
+  CheckCircle, XCircle, Clock, ChevronDown, AlertTriangle,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
@@ -42,6 +42,17 @@ export default function Events() {
   const upcoming  = events.filter((e) => e.status === 'upcoming')
                           .sort((a, b) => new Date(a.date) - new Date(b.date));
   const inProgress = events.filter((e) => e.status === 'in_progress');
+
+  // Song IDs that appear in more than one upcoming/in-progress event
+  const repeatedSongIds = useMemo(() => {
+    const count = {};
+    for (const ev of [...upcoming, ...inProgress]) {
+      for (const sid of (ev.songs ?? [])) {
+        count[sid] = (count[sid] ?? 0) + 1;
+      }
+    }
+    return new Set(Object.keys(count).filter((sid) => count[sid] > 1));
+  }, [upcoming, inProgress]);
   const completed = events.filter((e) => e.status === 'completed')
                           .sort((a, b) => new Date(b.date) - new Date(a.date));
   const cancelled = events.filter((e) => e.status === 'cancelled');
@@ -105,6 +116,7 @@ export default function Events() {
                 onEdit={() => setFormModal(event)}
                 onDelete={() => setDeleteTarget(event)}
                 onStatusChange={updateEventStatus}
+                repeatedSongIds={repeatedSongIds}
               />
             ))}
           </div>
@@ -127,6 +139,7 @@ export default function Events() {
                 onEdit={() => setFormModal(event)}
                 onDelete={() => setDeleteTarget(event)}
                 onStatusChange={updateEventStatus}
+                repeatedSongIds={repeatedSongIds}
               />
             ))}
           </div>
@@ -210,7 +223,7 @@ export default function Events() {
   );
 }
 
-function EventRow({ event, songs, canEdit, canDelete, canAdvance, onEdit, onDelete, onStatusChange, compact = false }) {
+function EventRow({ event, songs, canEdit, canDelete, canAdvance, onEdit, onDelete, onStatusChange, repeatedSongIds = new Set(), compact = false }) {
   const { id, title, date, time, type, directorName, songs: songIds = [], status, notes } = event;
 
   const eventSongs = songs.filter((s) => songIds.includes(s.id));
@@ -279,12 +292,20 @@ function EventRow({ event, songs, canEdit, canDelete, canAdvance, onEdit, onDele
 
       {!compact && eventSongs.length > 0 && (
         <div className="event-row__songs">
-          {eventSongs.slice(0, 3).map((s) => (
-            <span key={s.id} className="event-row__song-chip">
-              {s.title}
-              {s.key && <em>{s.key}</em>}
-            </span>
-          ))}
+          {eventSongs.slice(0, 3).map((s) => {
+            const repeated = repeatedSongIds.has(String(s.id));
+            return (
+              <span
+                key={s.id}
+                className={`event-row__song-chip${repeated ? ' event-row__song-chip--repeat' : ''}`}
+                title={repeated ? 'Esta canción ya está en otro culto próximo' : undefined}
+              >
+                {repeated && <AlertTriangle size={10} />}
+                {s.title}
+                {s.key && <em>{s.key}</em>}
+              </span>
+            );
+          })}
           {eventSongs.length > 3 && (
             <span className="event-row__song-chip event-row__song-chip--more">
               +{eventSongs.length - 3}

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Search, Check } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Search, Check, AlertTriangle } from 'lucide-react';
 import Modal from '../Modal/Modal';
 import '../Modal/Modal.css';
 import { useApp } from '../../context/AppContext';
@@ -13,7 +13,23 @@ const STATUS_OPTIONS = [
 ];
 
 export default function EventFormModal({ event, onSave, onClose }) {
-  const { songs, users } = useApp();
+  const { songs, users, events } = useApp();
+
+  // Map songId → names of OTHER upcoming/in-progress events that already use it
+  const conflictMap = useMemo(() => {
+    const map = {};
+    const activeEvents = events.filter(
+      (e) => (e.status === 'upcoming' || e.status === 'in_progress') &&
+              String(e.id) !== String(event?.id)
+    );
+    for (const ev of activeEvents) {
+      for (const sid of (ev.songs ?? [])) {
+        if (!map[sid]) map[sid] = [];
+        map[sid].push(ev.title);
+      }
+    }
+    return map;
+  }, [events, event?.id]);
   const directors = users.filter((u) =>
     ['admin', 'lider_directores', 'director'].includes(u.role) && u.active
   );
@@ -163,11 +179,12 @@ export default function EventFormModal({ event, onSave, onClose }) {
               </div>
               <div className="song-selector__list">
                 {filteredSongs.map((s) => {
-                  const selected = selectedSongs.includes(s.id);
+                  const selected  = selectedSongs.includes(s.id);
+                  const conflicts = conflictMap[s.id];
                   return (
                     <div
                       key={s.id}
-                      className={`song-selector__item${selected ? ' song-selector__item--selected' : ''}`}
+                      className={`song-selector__item${selected ? ' song-selector__item--selected' : ''}${conflicts ? ' song-selector__item--conflict' : ''}`}
                       onClick={() => toggleSong(s.id)}
                     >
                       <div className="song-selector__check">
@@ -175,6 +192,15 @@ export default function EventFormModal({ event, onSave, onClose }) {
                       </div>
                       <span className="song-selector__item-title">{s.title}</span>
                       {s.key && <span className="song-selector__item-key">{s.key}</span>}
+                      {conflicts && (
+                        <span
+                          className="song-selector__conflict"
+                          title={`Ya está en: ${conflicts.join(', ')}`}
+                        >
+                          <AlertTriangle size={12} />
+                          {conflicts.length === 1 ? '1 culto' : `${conflicts.length} cultos`}
+                        </span>
+                      )}
                     </div>
                   );
                 })}

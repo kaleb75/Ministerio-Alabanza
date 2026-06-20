@@ -113,6 +113,14 @@
 
 .event-row__song-chip--more { background: var(--bg-active); color: var(--text-tertiary); }
 
+.event-row__song-chip--repeat {
+  background: rgba(255, 214, 10, 0.12);
+  border: 1px solid rgba(255, 214, 10, 0.35);
+  color: #FFD60A;
+}
+
+.event-row__song-chip--repeat em { color: #FFD60A; }
+
 .event-row__notes {
   font-size: var(--font-size-xs);
   color: var(--text-tertiary);

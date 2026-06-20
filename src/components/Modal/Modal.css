@@ -331,6 +331,25 @@
   border-top: 1px solid var(--border-subtle);
 }
 
+.song-selector__item--conflict {
+  border-left: 3px solid var(--warning, #FFD60A);
+}
+
+.song-selector__conflict {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--warning, #FFD60A);
+  background: rgba(255, 214, 10, 0.12);
+  border: 1px solid rgba(255, 214, 10, 0.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: help;
+}
+
 /* ── Animations ── */
 @keyframes fadeIn {
   from { opacity: 0; }
