@@ -46,22 +46,26 @@ export default function Directors() {
     return events.filter((e) => String(e.directorId) === String(userId));
   }
 
-  function handleSave(data) {
-    if (formModal === 'create') {
-      try {
-        addUser(data);
-      } catch (err) {
-        alert(err.message);
-        return;
+  async function handleSave(data) {
+    try {
+      if (formModal === 'create') {
+        await addUser(data);
+      } else {
+        await updateUser(formModal.id, data);
       }
-    } else {
-      updateUser(formModal.id, data);
+      setFormModal(null);
+    } catch (err) {
+      console.error('Error guardando usuario:', err);
+      alert(err?.message ?? 'Error al guardar');
     }
-    setFormModal(null);
   }
 
-  function handleDelete() {
-    deleteUser(deleteTarget.id);
+  async function handleDelete() {
+    try {
+      await deleteUser(deleteTarget.id);
+    } catch (err) {
+      console.error('Error eliminando usuario:', err);
+    }
     setDeleteTarget(null);
   }
 

@@ -37,6 +37,7 @@ export default function Events() {
 
   const [formModal, setFormModal]       = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [saving, setSaving]             = useState(false);
 
   const upcoming  = events.filter((e) => e.status === 'upcoming')
                           .sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -45,17 +46,29 @@ export default function Events() {
                           .sort((a, b) => new Date(b.date) - new Date(a.date));
   const cancelled = events.filter((e) => e.status === 'cancelled');
 
-  function handleSave(data) {
-    if (formModal === 'create') {
-      addEvent(data);
-    } else {
-      updateEvent(formModal.id, data);
+  async function handleSave(data) {
+    setSaving(true);
+    try {
+      if (formModal === 'create') {
+        await addEvent(data);
+      } else {
+        await updateEvent(formModal.id, data);
+      }
+      setFormModal(null);
+    } catch (err) {
+      console.error('Error guardando evento:', err);
+      alert('Error al guardar el evento: ' + (err?.message ?? 'Error desconocido'));
+    } finally {
+      setSaving(false);
     }
-    setFormModal(null);
   }
 
-  function handleDelete() {
-    deleteEvent(deleteTarget.id);
+  async function handleDelete() {
+    try {
+      await deleteEvent(deleteTarget.id);
+    } catch (err) {
+      console.error('Error eliminando evento:', err);
+    }
     setDeleteTarget(null);
   }
 

@@ -49,17 +49,26 @@ export default function Songs() {
     );
   }, [songs, query]);
 
-  function handleSave(data) {
-    if (formModal === 'create') {
-      addSong(data);
-    } else {
-      updateSong(formModal.id, data);
+  async function handleSave(data) {
+    try {
+      if (formModal === 'create') {
+        await addSong(data);
+      } else {
+        await updateSong(formModal.id, data);
+      }
+      setFormModal(null);
+    } catch (err) {
+      console.error('Error guardando canción:', err);
+      alert('Error al guardar: ' + (err?.message ?? 'Error desconocido'));
     }
-    setFormModal(null);
   }
 
-  function handleDelete() {
-    deleteSong(deleteTarget.id);
+  async function handleDelete() {
+    try {
+      await deleteSong(deleteTarget.id);
+    } catch (err) {
+      console.error('Error eliminando canción:', err);
+    }
     setDeleteTarget(null);
   }
 
