@@ -28,6 +28,14 @@ export const TABLES = [
 
 const IDB_KEY = 'fsdb_dir_handle';
 
+const writeQueues = new Map();
+function enqueueWrite(tableName, writeFn) {
+  const prev = writeQueues.get(tableName) || Promise.resolve();
+  const next = prev.then(writeFn).catch(() => {});
+  writeQueues.set(tableName, next);
+  return next;
+}
+
 class FileSystemDB {
   constructor() {
     this._dir = null;
@@ -109,8 +117,11 @@ class FileSystemDB {
       const file = await fh.getFile();
       const text = await file.text();
       return JSON.parse(text);
-    } catch {
-      return null; // File doesn't exist yet
+    } catch (err) {
+      if (err.name === 'NotFoundError' || err.name === 'TypeMismatchError') {
+        return null; // File doesn't exist yet
+      }
+      throw err; // Corrupt file or other error — don't silently overwrite
     }
   }
 
@@ -120,15 +131,17 @@ class FileSystemDB {
    */
   async writeTable(name, data) {
     if (!this._dir) return false;
-    try {
-      const fh = await this._dir.getFileHandle(`${name}.json`, { create: true });
-      const w  = await fh.createWritable();
-      await w.write(JSON.stringify(data, null, 2));
-      await w.close();
-      return true;
-    } catch {
-      return false;
-    }
+    return enqueueWrite(name, async () => {
+      try {
+        const fh = await this._dir.getFileHandle(`${name}.json`, { create: true });
+        const w  = await fh.createWritable();
+        await w.write(JSON.stringify(data, null, 2));
+        await w.close();
+        return true;
+      } catch {
+        return false;
+      }
+    });
   }
 
   /**

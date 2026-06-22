@@ -25,9 +25,9 @@ export function scoreSong(song, options = {}) {
     .sort((a, b) => (a.date > b.date ? -1 : 1))[0];
   const days = lastEntry ? dayjs().diff(dayjs(lastEntry.date), 'day') : 999;
   score += Math.min(40, (days / 90) * 40);
-  if (days > 180)    reasons.push(`Sin usar en ${Math.round(days)} días`);
+  if (days === 999)   reasons.push('Nunca usada en un servicio');
+  else if (days > 180) reasons.push(`Sin usar en ${Math.round(days)} días`);
   else if (days > 60) reasons.push(`${Math.round(days)} días sin usarse`);
-  else if (days === 999) reasons.push('Nunca usada en un servicio');
 
   // Genre fit (0-25)
   if (profile.preferredGenres.includes(song.genre)) {

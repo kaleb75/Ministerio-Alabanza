@@ -1,9 +1,113 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSongSettings } from '../../context/SongSettingsContext';
+import { getLoginSummary, getUserLoginHistory } from '../../services/loginLogsService';
 import mockRoles from '../../data/mockRoles.json';
-import { LogOut, User, Sliders, RotateCcw, DatabaseZap } from 'lucide-react';
+import { LogOut, User, Sliders, RotateCcw, DatabaseZap, ShieldCheck, ChevronDown, ChevronUp } from 'lucide-react';
 import './Settings.css';
+
+function formatRelative(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins  = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days  = Math.floor(diff / 86400000);
+  if (mins < 1)   return 'Justo ahora';
+  if (mins < 60)  return `Hace ${mins} min`;
+  if (hours < 24) return `Hace ${hours}h`;
+  if (days < 30)  return `Hace ${days}d`;
+  return new Date(dateStr).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function LoginLogsPanel() {
+  const [summary, setSummary]     = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [expanded, setExpanded]   = useState(null);
+  const [history, setHistory]     = useState({});
+
+  useEffect(() => {
+    getLoginSummary().then(d => { setSummary(d); setLoading(false); });
+  }, []);
+
+  async function toggleHistory(userId) {
+    if (expanded === userId) { setExpanded(null); return; }
+    setExpanded(userId);
+    if (!history[userId]) {
+      const logs = await getUserLoginHistory(userId);
+      setHistory(h => ({ ...h, [userId]: logs }));
+    }
+  }
+
+  if (loading) return <p className="settings__desc">Cargando logs…</p>;
+  if (!summary.length) return <p className="settings__desc">No hay registros aún.</p>;
+
+  return (
+    <div className="logs__table-wrap">
+      <table className="logs__table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Último acceso</th>
+            <th style={{ textAlign: 'center' }}>Sesiones</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {summary.map(row => {
+            const roleInfo = Object.entries(mockRoles).find(([, v]) =>
+              row.user_email?.includes(v.label?.toLowerCase?.())
+            );
+            return (
+              <>
+                <tr key={row.user_id} className="logs__row">
+                  <td>
+                    <div className="logs__user">
+                      <div className="logs__avatar">
+                        {(row.user_name || '?')[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="logs__name">{row.user_name}</div>
+                        <div className="logs__email">{row.user_email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>—</td>
+                  <td>{formatRelative(row.last_login)}</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <span className="logs__badge">{row.count}</span>
+                  </td>
+                  <td>
+                    <button className="logs__expand-btn" onClick={() => toggleHistory(row.user_id)}>
+                      {expanded === row.user_id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                    </button>
+                  </td>
+                </tr>
+                {expanded === row.user_id && (
+                  <tr key={`${row.user_id}-hist`} className="logs__history-row">
+                    <td colSpan={5}>
+                      <div className="logs__history">
+                        <p className="logs__history-title">Historial de sesiones</p>
+                        {(history[row.user_id] ?? []).map((h, i) => (
+                          <div key={i} className="logs__history-item">
+                            <span className="logs__dot" />
+                            {new Date(h.login_at).toLocaleString('es-MX', {
+                              weekday: 'short', day: '2-digit', month: 'short',
+                              year: 'numeric', hour: '2-digit', minute: '2-digit',
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export default function Settings() {
   const { user, logout } = useAuth();
@@ -88,6 +192,22 @@ export default function Settings() {
           </div>
         </div>
       </div>
+
+      {/* ── Admin: Login Logs ── */}
+      {user?.role === 'admin' && (
+        <div className="card settings__section">
+          <div className="settings__section-header">
+            <div className="settings__section-title">
+              <ShieldCheck size={18} />
+              <span>Registro de Sesiones</span>
+            </div>
+          </div>
+          <p className="settings__desc">
+            Historial de inicio de sesión de todos los usuarios.
+          </p>
+          <LoginLogsPanel />
+        </div>
+      )}
 
       {/* ── Reset data ── */}
       <div className="card settings__section">

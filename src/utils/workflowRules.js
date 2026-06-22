@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { USER_ROLES } from './constants';
 
 export const REQUEST_TYPES = {
@@ -50,7 +51,7 @@ export function validateNewRequest(request, existingRequests, events) {
   }
 
   if (request.requestedDate) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = dayjs().format('YYYY-MM-DD');
     if (request.requestedDate <= today) {
       errors.push('La nueva fecha solicitada debe ser futura.');
     }

@@ -45,7 +45,8 @@ export function fuzzyMatch(slugA, slugB) {
   const a = stripDuplicateSuffixes(slugA);
   const b = stripDuplicateSuffixes(slugB);
   if (a === b) return true;
-  if (a.includes(b) || b.includes(a)) return true;
+  if (b.length >= 5 && a.includes(b)) return true;
+  if (a.length >= 5 && b.includes(a)) return true;
   const minLen = Math.min(a.length, b.length);
   if (minLen >= 6 && levenshteinDistance(a, b) <= 2) return true;
   return false;

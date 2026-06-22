@@ -167,6 +167,7 @@ export async function login(clientId) {
     function onMessage(evt) {
       if (evt.origin !== window.location.origin) return;
       if (evt.data?.type !== 'MS_AUTH_CODE')     return;
+      if (evt.data.state !== sessionStorage.getItem(SK.state)) return;
 
       const { code, error } = evt.data;
       if (error) { settle(reject, new Error(error)); return; }

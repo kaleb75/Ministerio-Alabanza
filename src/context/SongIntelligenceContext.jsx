@@ -196,18 +196,25 @@ export function SongIntelligenceProvider({ children }) {
   // -------------------------------------------------------------------------
   const checkSongRepetition = useCallback(
     (songId, eventDate) => {
+      const sensitivityMultiplier =
+        recommendationSensitivity === 'high'
+          ? 0.5
+          : recommendationSensitivity === 'low'
+          ? 1.5
+          : 1.0;
+      const effectiveBlockDays = blockRepeatDays * sensitivityMultiplier;
       const item = analyticsMap[songId];
       if (!item || !item.lastPlayedDate) {
-        return { allowed: true, daysSinceLast: null, blockDays: blockRepeatDays };
+        return { allowed: true, daysSinceLast: null, blockDays: effectiveBlockDays };
       }
       const daysSinceLast = daysBetween(eventDate, item.lastPlayedDate);
       return {
-        allowed: daysSinceLast >= blockRepeatDays,
+        allowed: daysSinceLast >= effectiveBlockDays,
         daysSinceLast,
-        blockDays: blockRepeatDays,
+        blockDays: effectiveBlockDays,
       };
     },
-    [analyticsMap, blockRepeatDays]
+    [analyticsMap, blockRepeatDays, recommendationSensitivity]
   );
 
   // -------------------------------------------------------------------------

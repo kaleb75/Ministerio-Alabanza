@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { recordLogin } from './loginLogsService';
 
 const STORAGE_KEYS = {
   USER: 'ministry_auth_user',
@@ -17,6 +18,7 @@ export async function authenticate(email, password) {
   if (data.password !== password) return null;
 
   const { password: _pw, ...safeUser } = data;
+  recordLogin(safeUser);
   return safeUser;
 }
 

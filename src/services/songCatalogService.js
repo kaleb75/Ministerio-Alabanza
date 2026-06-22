@@ -104,7 +104,7 @@ export function buildSongCatalog(oneDriveFiles) {
       // Try fuzzy match on legacy slugs
       let matched = false;
       for (const [lSlug, lEntry] of legacyBySlug.entries()) {
-        if (slug.includes(lSlug) || lSlug.includes(slug)) {
+        if ((lSlug.length >= 5 && slug.includes(lSlug)) || (slug.length >= 5 && lSlug.includes(slug))) {
           legacyBySlug.set(lSlug, mergeSongSources(lEntry, merged));
           matched = true;
           break;
@@ -122,7 +122,7 @@ export function buildSongCatalog(oneDriveFiles) {
 
   return {
     catalog: deduplicated,
-    duplicateGroups: groupDuplicates(combinedCatalog),
+    duplicateGroups: groupDuplicates(deduplicated),
     stats: {
       total: deduplicated.length,
       withChords: deduplicated.filter((s) => s.availableFormats?.chords).length,
