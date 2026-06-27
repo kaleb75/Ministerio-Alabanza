@@ -121,6 +121,66 @@
 
 .event-row__song-chip--repeat em { color: #FFD60A; }
 
+/* Secondary director label */
+.event-row__meta-secondary {
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+/* Responsibility chips */
+.event-row__resps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.event-row__resp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.event-row__resp-label {
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.event-row__resp-name {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Sermon / Bible reading rows */
+.event-row__word-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+.event-row__word-row svg { color: var(--text-tertiary); flex-shrink: 0; }
+
+.event-row__word-ref { color: var(--text-secondary); }
+
+.event-row__word-title {
+  color: var(--text-tertiary);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .event-row__notes {
   font-size: var(--font-size-xs);
   color: var(--text-tertiary);

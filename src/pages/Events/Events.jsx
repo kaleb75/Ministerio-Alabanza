@@ -1,17 +1,25 @@
 import { useState, useMemo } from 'react';
 import {
   CalendarDays, Plus, Pencil, Trash2,
-  CheckCircle, XCircle, Clock, ChevronDown, AlertTriangle,
+  CheckCircle, XCircle, Clock, AlertTriangle,
+  User, Video, Radio, Mic2, BookOpen,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
 import { canPerformAction, canEditEvent, canDeleteEvent, canAdvanceEvent } from '../../utils/permissions';
-import EventCard from '../../components/EventCard/EventCard';
 import EventFormModal from '../../components/EventFormModal/EventFormModal';
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog';
 import { formatDate, formatTime } from '../../utils/dateUtils';
-import { EVENT_STATUS_LABELS } from '../../utils/constants';
+import { EVENT_STATUS_LABELS, RESPONSIBILITY_LABELS } from '../../utils/constants';
 import './Events.css';
+
+const RESP_ICONS = {
+  director_principal:  User,
+  director_secundario: User,
+  proyeccion:          Video,
+  streaming:           Radio,
+  predicador:          Mic2,
+};
 
 const STATUS_CYCLE = {
   upcoming:    'in_progress',
@@ -32,7 +40,7 @@ export default function Events() {
   const { user } = useAuth();
 
   // Admins/lideres can create events; directors cannot (they get assigned)
-  const canCreate = canPerformAction(user?.role, 'events', 'create');
+  const canCreate = canPerformAction(user, 'events', 'create');
   // Edit/delete/advance are now checked per-event based on ownership (see helpers below)
 
   const [formModal, setFormModal]       = useState(null);
@@ -224,11 +232,23 @@ export default function Events() {
 }
 
 function EventRow({ event, songs, canEdit, canDelete, canAdvance, onEdit, onDelete, onStatusChange, repeatedSongIds = new Set(), compact = false }) {
-  const { id, title, date, time, type, directorName, songs: songIds = [], status, notes } = event;
+  const { id, title, date, time, type, songs: songIds = [], status, notes, serviceResponsibilities, sermon, bibleReading } = event;
 
   const eventSongs = songs.filter((s) => songIds.includes(s.id));
   const nextStatus = STATUS_CYCLE[status];
   const showActions = canEdit || canDelete || canAdvance;
+
+  // Derive director name from primary responsibility
+  const primaryResp = serviceResponsibilities?.find((r) => r.type === 'director_principal' && r.assignedUserName);
+  const directorDisplay = primaryResp?.assignedUserName || event.directorName || '';
+
+  // Other assigned responsibilities (non-director)
+  const otherResps = (serviceResponsibilities || []).filter(
+    (r) => r.assignedUserId && r.type !== 'director_principal'
+  );
+
+  // Secondary director if assigned
+  const secondaryResp = serviceResponsibilities?.find((r) => r.type === 'director_secundario' && r.assignedUserName);
 
   return (
     <article className={`event-row card${compact ? ' event-row--compact' : ''}`}>
@@ -276,6 +296,7 @@ function EventRow({ event, songs, canEdit, canDelete, canAdvance, onEdit, onDele
 
       <h3 className="event-row__title">{title}</h3>
 
+      {/* Date / time / director */}
       <div className="event-row__meta">
         <span className="event-row__meta-item">
           <CalendarDays size={12} />
@@ -285,11 +306,32 @@ function EventRow({ event, songs, canEdit, canDelete, canAdvance, onEdit, onDele
           <Clock size={12} />
           {formatTime(time)}
         </span>
-        {directorName && (
-          <span className="event-row__meta-item">{directorName}</span>
+        {directorDisplay && (
+          <span className="event-row__meta-item">
+            <User size={12} />
+            {directorDisplay}
+            {secondaryResp && <span className="event-row__meta-secondary"> + {secondaryResp.assignedUserName}</span>}
+          </span>
         )}
       </div>
 
+      {/* Other responsibilities (proyeccion, streaming, predicador) */}
+      {!compact && otherResps.length > 0 && (
+        <div className="event-row__resps">
+          {otherResps.map((resp) => {
+            const Icon = RESP_ICONS[resp.type] || User;
+            return (
+              <span key={resp.id} className="event-row__resp-chip">
+                <Icon size={11} />
+                <span className="event-row__resp-label">{RESPONSIBILITY_LABELS[resp.type]}</span>
+                <span className="event-row__resp-name">{resp.assignedUserName}</span>
+              </span>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Songs */}
       {!compact && eventSongs.length > 0 && (
         <div className="event-row__songs">
           {eventSongs.slice(0, 3).map((s) => {
@@ -311,6 +353,27 @@ function EventRow({ event, songs, canEdit, canDelete, canAdvance, onEdit, onDele
               +{eventSongs.length - 3}
             </span>
           )}
+        </div>
+      )}
+
+      {/* Sermon */}
+      {!compact && sermon?.book && (
+        <div className="event-row__word-row">
+          <Mic2 size={12} />
+          <span className="event-row__word-ref">
+            {sermon.book} {sermon.chapter}{sermon.verses ? `:${sermon.verses}` : ''}
+          </span>
+          {sermon.title && <span className="event-row__word-title"> — {sermon.title}</span>}
+        </div>
+      )}
+
+      {/* Bible reading */}
+      {!compact && bibleReading?.book && (
+        <div className="event-row__word-row">
+          <BookOpen size={12} />
+          <span className="event-row__word-ref">
+            {bibleReading.book} {bibleReading.chapter}{bibleReading.verses ? `:${bibleReading.verses}` : ''}
+          </span>
         </div>
       )}
 
