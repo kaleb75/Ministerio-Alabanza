@@ -1,6 +1,7 @@
 import MiniBarChart from '../../components/Charts/MiniBarChart/MiniBarChart';
 import DonutChart from '../../components/Charts/DonutChart/DonutChart';
 import dayjs from 'dayjs';
+import { ROLE_LABELS } from '../../utils/constants';
 
 const AVATAR_COLORS = ['#FF9500','#0A84FF','#32D74B','#FFD60A','#FF453A','#BF5AF2'];
 
@@ -13,11 +14,6 @@ const TYPE_COLORS = {
   'Otro':             '#8E8E93',
 };
 
-const ROLE_LABELS = {
-  admin:            'Administrador',
-  lider_directores: 'Líder de Dir.',
-  director:         'Director',
-};
 
 export default function DirectorTab({ analytics }) {
   const { directors, eventsByType } = analytics;
@@ -57,7 +53,7 @@ export default function DirectorTab({ analytics }) {
                 </div>
                 <div className="director-stat-card__info">
                   <span className="director-stat-card__name">{d.name}</span>
-                  <span className="director-stat-card__role">{ROLE_LABELS[d.role] || d.role}</span>
+                  <span className="director-stat-card__role">{(d.roles || [d.role]).map((r) => ROLE_LABELS[r] || r).join(' · ')}</span>
                 </div>
               </div>
 

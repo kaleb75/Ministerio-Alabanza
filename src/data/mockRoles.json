@@ -3,23 +3,47 @@
     "label": "Administrador",
     "description": "Acceso total al sistema",
     "color": "#FF9500",
-    "level": 4
+    "level": 8
   },
   "lider_directores": {
     "label": "Líder de Directores",
-    "description": "Gestión de directores y eventos",
+    "description": "Gestión de directores y cultos",
     "color": "#0A84FF",
-    "level": 3
+    "level": 7
   },
   "director": {
     "label": "Director",
     "description": "Gestión de canciones y solicitudes",
     "color": "#32D74B",
-    "level": 2
+    "level": 6
+  },
+  "predicador": {
+    "label": "Predicador",
+    "description": "Lectura de cultos asignados",
+    "color": "#FF6B35",
+    "level": 5
+  },
+  "proyeccion": {
+    "label": "Proyección",
+    "description": "Lectura de cultos asignados",
+    "color": "#BF5AF2",
+    "level": 4
+  },
+  "streaming": {
+    "label": "Streaming",
+    "description": "Lectura de cultos asignados",
+    "color": "#5AC8FA",
+    "level": 3
   },
   "musico": {
     "label": "Músico",
-    "description": "Acceso de solo lectura",
+    "description": "Gestión de usuarios, no programado en cultos",
+    "color": "#FFD60A",
+    "level": 2
+  },
+  "solo_lectura": {
+    "label": "Solo Lectura",
+    "description": "Lectura de todo el sistema",
     "color": "#8E8E93",
     "level": 1
   }

@@ -1,57 +1,95 @@
 import mockPermissions from '../data/mockPermissions.json';
 
-export function canAccessRoute(role, routeKey) {
-  const perms = mockPermissions[role];
-  if (!perms) return false;
-  return perms.routes.includes(routeKey);
+function getEffectiveRoles(user) {
+  if (!user) return [];
+  if (Array.isArray(user.roles) && user.roles.length > 0) return user.roles;
+  if (user.role) return [user.role];
+  return [];
 }
 
-export function getAccessibleRoutes(role) {
-  const perms = mockPermissions[role];
-  if (!perms) return [];
-  return [...perms.routes];
+function mergedPerms(roles) {
+  const routes = new Set();
+  const actions = {};
+  for (const role of roles) {
+    const p = mockPermissions[role];
+    if (!p) continue;
+    p.routes.forEach((r) => routes.add(r));
+    for (const [resource, acts] of Object.entries(p.actions || {})) {
+      if (!actions[resource]) actions[resource] = new Set();
+      acts.forEach((a) => actions[resource].add(a));
+    }
+  }
+  return { routes, actions };
 }
 
-export function canPerformAction(role, resource, action) {
-  const perms = mockPermissions[role];
-  if (!perms?.actions?.[resource]) return false;
-  return perms.actions[resource].includes(action);
+export function canAccessRoute(userOrRole, routeKey) {
+  let roles;
+  if (typeof userOrRole === 'string') {
+    roles = [userOrRole];
+  } else {
+    roles = getEffectiveRoles(userOrRole);
+  }
+  const { routes } = mergedPerms(roles);
+  return routes.has(routeKey);
 }
 
-/**
- * Can this user edit a specific event?
- *
- * - admin / lider_directores: can edit ANY event
- * - director:                 can edit ONLY events assigned to them
- * - musico:                   never
- */
+export function getAccessibleRoutes(userOrRole) {
+  let roles;
+  if (typeof userOrRole === 'string') {
+    roles = [userOrRole];
+  } else {
+    roles = getEffectiveRoles(userOrRole);
+  }
+  const { routes } = mergedPerms(roles);
+  return [...routes];
+}
+
+export function canPerformAction(userOrRole, resource, action) {
+  let roles;
+  if (typeof userOrRole === 'string') {
+    roles = [userOrRole];
+  } else {
+    roles = getEffectiveRoles(userOrRole);
+  }
+  const { actions } = mergedPerms(roles);
+  return actions[resource]?.has(action) ?? false;
+}
+
+export function userHasRole(user, role) {
+  const roles = getEffectiveRoles(user);
+  return roles.includes(role);
+}
+
+export function userHasAnyRole(user, roleList) {
+  const roles = getEffectiveRoles(user);
+  return roleList.some((r) => roles.includes(r));
+}
+
 export function canEditEvent(user, event) {
   if (!user || !event) return false;
-  if (['admin', 'lider_directores'].includes(user.role)) return true;
-  if (user.role === 'director') {
-    return String(event.directorId) === String(user.id);
+  if (userHasAnyRole(user, ['admin', 'lider_directores'])) return true;
+  if (userHasRole(user, 'director')) {
+    const primaryResp = (event.serviceResponsibilities || []).find(
+      (r) => r.type === 'director_principal'
+    );
+    return primaryResp && String(primaryResp.assignedUserId) === String(user.id);
   }
   return false;
 }
 
-/**
- * Can this user delete a specific event?
- * Only admin and lider can delete. Directors cannot delete events.
- */
 export function canDeleteEvent(user) {
   if (!user) return false;
-  return ['admin', 'lider_directores'].includes(user.role);
+  return userHasAnyRole(user, ['admin', 'lider_directores']);
 }
 
-/**
- * Can this user advance the status of a specific event?
- * Directors can mark their own events as in_progress or completed.
- */
 export function canAdvanceEvent(user, event) {
   if (!user || !event) return false;
-  if (['admin', 'lider_directores'].includes(user.role)) return true;
-  if (user.role === 'director') {
-    return String(event.directorId) === String(user.id);
+  if (userHasAnyRole(user, ['admin', 'lider_directores'])) return true;
+  if (userHasRole(user, 'director')) {
+    const primaryResp = (event.serviceResponsibilities || []).find(
+      (r) => r.type === 'director_principal'
+    );
+    return primaryResp && String(primaryResp.assignedUserId) === String(user.id);
   }
   return false;
 }

@@ -14,7 +14,7 @@ const ALL_NAV = [
   { to: ROUTES.DASHBOARD, label: 'Dashboard',   icon: LayoutDashboard, routeKey: 'dashboard' },
   { to: ROUTES.SONGS,     label: 'Canciones',   icon: Music2,          routeKey: 'songs'     },
   { to: ROUTES.EVENTS,    label: 'Cultos',       icon: CalendarDays,    routeKey: 'events'    },
-  { to: ROUTES.DIRECTORS, label: 'Directores',   icon: Users,           routeKey: 'directors' },
+  { to: ROUTES.USUARIOS, label: 'Usuarios',     icon: Users,           routeKey: 'usuarios'  },
   { to: ROUTES.REQUESTS,  label: 'Solicitudes',  icon: Inbox,           routeKey: 'requests'  },
   { to: ROUTES.HISTORY,    label: 'Historial',    icon: History,   routeKey: 'history'   },
   { to: ROUTES.ANALYTICS,  label: 'Analíticas',   icon: BarChart2, routeKey: 'analytics' },

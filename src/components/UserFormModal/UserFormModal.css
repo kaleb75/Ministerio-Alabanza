@@ -49,3 +49,24 @@
   font-size: var(--font-size-sm);
   color: var(--text-primary);
 }
+
+.role-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.role-chip {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.role-chip:hover { border-color: var(--border-default); color: var(--text-primary); }
+.role-chip--selected { font-weight: 600; }

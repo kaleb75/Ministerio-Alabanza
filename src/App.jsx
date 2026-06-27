@@ -15,7 +15,7 @@ import Login from './pages/Login/Login';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Songs from './pages/Songs/Songs';
 import Events from './pages/Events/Events';
-import Directors from './pages/Directors/Directors';
+import Usuarios from './pages/Usuarios/Usuarios';
 import Requests from './pages/Requests/Requests';
 import History from './pages/History/History';
 import Settings from './pages/Settings/Settings';
@@ -65,9 +65,9 @@ function AppShell() {
               <ErrorBoundary><Events /></ErrorBoundary>
             </ProtectedRoute>
           } />
-          <Route path={ROUTES.DIRECTORS} element={
-            <ProtectedRoute routeKey="directors">
-              <ErrorBoundary><Directors /></ErrorBoundary>
+          <Route path={ROUTES.USUARIOS} element={
+            <ProtectedRoute routeKey="usuarios">
+              <ErrorBoundary><Usuarios /></ErrorBoundary>
             </ProtectedRoute>
           } />
           <Route path={ROUTES.REQUESTS} element={

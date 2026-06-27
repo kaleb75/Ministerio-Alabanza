@@ -38,10 +38,13 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   }, []);
 
-  const hasRole = useCallback((roles) => {
+  const hasRole = useCallback((roleOrRoles) => {
     if (!user) return false;
-    const list = Array.isArray(roles) ? roles : [roles];
-    return list.includes(user.role);
+    const check = Array.isArray(roleOrRoles) ? roleOrRoles : [roleOrRoles];
+    const userRoles = Array.isArray(user.roles) && user.roles.length > 0
+      ? user.roles
+      : (user.role ? [user.role] : []);
+    return check.some((r) => userRoles.includes(r));
   }, [user]);
 
   return (

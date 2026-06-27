@@ -11,7 +11,7 @@ const ALL_NAV = [
   { to: ROUTES.SONGS,     label: 'Canciones',  icon: Music2,          routeKey: 'songs'     },
   { to: ROUTES.EVENTS,    label: 'Cultos',      icon: CalendarDays,    routeKey: 'events'    },
   { to: ROUTES.REQUESTS,  label: 'Solicitudes', icon: Inbox,           routeKey: 'requests'  },
-  { to: ROUTES.DIRECTORS, label: 'Directores',  icon: Users,           routeKey: 'directors' },
+  { to: ROUTES.USUARIOS, label: 'Usuarios',   icon: Users,           routeKey: 'usuarios'  },
   { to: ROUTES.HISTORY,   label: 'Historial',   icon: History,         routeKey: 'history'   },
 ];
 

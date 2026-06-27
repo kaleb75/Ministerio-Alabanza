@@ -1,35 +1,53 @@
 {
   "admin": {
-    "routes": ["dashboard","songs","events","directors","requests","history","settings","analytics","planner"],
+    "routes": ["dashboard","songs","events","usuarios","requests","history","settings","analytics","planner"],
     "actions": {
-      "songs":     ["read","create","edit","delete"],
-      "events":    ["read","create","edit","delete"],
-      "directors": ["read","create","edit","delete"],
-      "requests":  ["read","create","approve","reject"],
-      "settings":  ["read","edit"],
-      "analytics": ["read"],
-      "planner":   ["read","create"]
+      "songs":    ["read","create","edit","delete"],
+      "events":   ["read","create","edit","delete"],
+      "usuarios": ["read","create","edit","delete"],
+      "requests": ["read","create","approve","reject"],
+      "settings": ["read","edit"],
+      "analytics":["read"],
+      "planner":  ["read","create"]
     }
   },
   "lider_directores": {
-    "routes": ["dashboard","events","requests","songs","directors","history","analytics","planner"],
+    "routes": ["dashboard","events","requests","songs","usuarios","history","analytics","planner"],
     "actions": {
-      "songs":     ["read","create","edit"],
-      "events":    ["read","create","edit"],
-      "directors": ["read"],
-      "requests":  ["read","create","approve"],
-      "history":   ["read"],
-      "analytics": ["read"],
-      "planner":   ["read","create"]
+      "songs":    ["read","create","edit"],
+      "events":   ["read","create","edit"],
+      "usuarios": ["read"],
+      "requests": ["read","create","approve"],
+      "history":  ["read"],
+      "analytics":["read"],
+      "planner":  ["read","create"]
     }
   },
   "director": {
     "routes": ["dashboard","songs","requests","events","planner"],
     "actions": {
-      "songs":    ["read","create"],
-      "events":   ["read"],
-      "requests": ["read","create"],
-      "planner":  ["read","create"]
+      "songs":   ["read","create"],
+      "events":  ["read"],
+      "requests":["read","create"],
+      "planner": ["read","create"]
+    }
+  },
+  "predicador": {
+    "routes": ["dashboard","events"],
+    "actions": {
+      "events": ["read"]
+    }
+  },
+  "proyeccion": {
+    "routes": ["dashboard","events"],
+    "actions": {
+      "events": ["read"]
+    }
+  },
+  "streaming": {
+    "routes": ["dashboard","events"],
+    "actions": {
+      "events": ["read"]
     }
   },
   "musico": {
@@ -37,6 +55,15 @@
     "actions": {
       "songs":  ["read"],
       "events": ["read"]
+    }
+  },
+  "solo_lectura": {
+    "routes": ["dashboard","events","songs","history","analytics"],
+    "actions": {
+      "songs":    ["read"],
+      "events":   ["read"],
+      "history":  ["read"],
+      "analytics":["read"]
     }
   }
 }
