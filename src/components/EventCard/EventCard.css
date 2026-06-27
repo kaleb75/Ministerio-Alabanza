@@ -77,6 +77,41 @@
   line-height: 1.5;
 }
 
+/* Responsibility chips */
+.event-card__resps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.event-card__resp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-full);
+  padding: 3px 8px;
+  border: 1px solid var(--border-subtle);
+}
+
+/* Sermon / Bible reading */
+.event-card__sermon,
+.event-card__bible {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 8px;
+}
+.event-card__sermon svg,
+.event-card__bible svg { color: var(--text-tertiary); flex-shrink: 0; }
+.event-card__sermon em { font-style: italic; color: var(--text-tertiary); }
+
 /* Compact variant */
 .event-card--compact {
   padding: 12px;
